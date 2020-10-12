@@ -1,9 +1,10 @@
+// SPDX-License-Identifier: GPLv3
 pragma solidity >=0.6.0 <0.7.0;
 pragma experimental ABIEncoderV2;
 
 import "@nomiclabs/buidler/console.sol";
 
-contract E2EEContract {
+contract DocumentRegistry {
 
     struct UserSchema {
         string name;
