@@ -32,7 +32,6 @@ export default function Documents(props) {
     const downloadFile = (docIndex)=>{
         console.log('Downloading:',docIndex)
         index.downloadFile(docIndex,password, props.tx, props.writeContracts).then((result)=>{
-            alert("File Downloaded!")
         })
     }
 

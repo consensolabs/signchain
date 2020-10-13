@@ -7,6 +7,8 @@ const index = require('../lib/e2ee.js')
 export default function Dashboard(props) {
 
     const password = localStorage.getItem('password')
+
+    const [signer, setSigner] = useState({})
     const fileStorage =["AWS","Fleek"]
     const [users, setUsers] = useState([])
     const [caller, setCaller] = useState(null)
@@ -25,7 +27,9 @@ export default function Dashboard(props) {
 
 
     useEffect(() => {
+        
         if (props.writeContracts) {
+            setSigner(props.userProvider.getSigner())
             index.getAllUsers(props.address, props.tx, props.writeContracts).then(result => {
                 console.log("Registered users:", result)
                 if (result.userArray.length > 0) {
@@ -46,7 +50,7 @@ export default function Dashboard(props) {
         }
         partiesInvolved.push(caller)
         const receipt  = await index.uploadFile(partiesInvolved, file, password, setSubmitting,
-            props.tx, props.writeContracts, storageType)
+            props.tx, props.writeContracts, signer, storageType)
         console.log("File uploaded!", receipt)
     }
 

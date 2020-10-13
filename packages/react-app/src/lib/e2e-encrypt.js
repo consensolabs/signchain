@@ -1,5 +1,6 @@
 const crypto = require('crypto')
 const eccrypto = require("eccrypto")
+const ethers = require("ethers")
 
 /**
  * Encrypts Symmetric key used for encrypting file
@@ -95,7 +96,8 @@ export const encryptFile = function(file,cipherKey){
 }
 
 export const calculateHash = function(file){
-    return crypto.createHash('sha256').update(file.toString()).digest()
+    // return crypto.createHash('sha256').update(file.toString()).digest()
+    return ethers.utils.keccak256(file)
 }
 
 export const decryptFile = async function(encryptedData,cipherKey){

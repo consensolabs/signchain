@@ -4,22 +4,23 @@ const fleekStorage = require('@fleekhq/fleek-storage-js')
 const wallet = require('wallet-besu')
 const fileDownload = require('js-file-download')
 const e2e = require('./e2e-encrypt.js')
+const ethers = require('ethers')
 
 AWS.config.update({
     region: 'ap-south-1',
-    accessKeyId: '******************',
-    secretAccessKey: '************************************'
+    accessKeyId: 'AKIAWRATGLMSFFKRKNT3',
+    secretAccessKey: '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'
 })
 let s3 = new AWS.S3();
 
-const fleekApiKey = '******************'
-const fleekApiSecret = '******************'
+const fleekApiKey = "t8DYhMZ1ztjUtOFC8qEDqg=="
+const fleekApiSecret = "XwZyU7RZ3H2Z1QHhUdFdi4MJx8j1axJm2hEq1olRWeU="
 
 export const registerUser = async function(name, email, privateKey, tx, writeContracts){
     try {
         let publicKey = e2e.getPublicKey(privateKey)
         publicKey = publicKey.toString("hex")
-        const result = await tx(writeContracts.E2EEContract.registerUser(
+        const result = await tx(writeContracts.Signchain.registerUser(
             name, email, publicKey
         ))
         console.log("Register res:",result)
@@ -41,7 +42,7 @@ export const loginUser = async function(privateKey, tx, writeContracts){
     try {
         let publicKey = e2e.getPublicKey(privateKey)
         publicKey = publicKey.toString("hex")
-        const result = await tx(writeContracts.E2EEContract.updatePublicKey(
+        const result = await tx(writeContracts.Signchain.updatePublicKey(
             publicKey
         ))
         console.log("Login:",result)
@@ -52,12 +53,12 @@ export const loginUser = async function(privateKey, tx, writeContracts){
 }
 
 export const getAllUsers = async function(loggedUser, tx, writeContracts){
-    const registeredUsers = await tx(writeContracts.E2EEContract.getAllUsers())
+    const registeredUsers = await tx(writeContracts.Signchain.getAllUsers())
     let caller
     let userArray = []
     try {
         for (let i = 0; i < registeredUsers.length; i++){
-            const result = await tx(writeContracts.E2EEContract.storeUser(registeredUsers[i]))
+            const result = await tx(writeContracts.Signchain.storeUser(registeredUsers[i]))
             if (loggedUser.toLowerCase()!==registeredUsers[i].toLowerCase()) {
                 const value = {
                     address: registeredUsers[i],
@@ -133,7 +134,7 @@ export const getFileAWS = function (key){
     })
 }
 
-export const uploadFile = async function(party, file, password, setSubmitting, tx, writeContracts,
+export const uploadFile = async function(party, file, password, setSubmitting, tx, writeContracts, signer,
                                          storageType){
 
     let encryptedKeys=[]
@@ -149,6 +150,8 @@ export const uploadFile = async function(party, file, password, setSubmitting, t
         const encryptedFile = await e2e.encryptFile(Buffer.from(fileInput), cipherKey)
 
         const fileHash = e2e.calculateHash(fileInput)
+
+        const signature = await signDocument(fileHash, tx, writeContracts , signer)
 
         for (let i=0;i<party.length;i++){
             let aesEncKey = await e2e.encryptKey(Buffer.from(party[i].key,"hex"), cipherKey)
@@ -166,9 +169,8 @@ export const uploadFile = async function(party, file, password, setSubmitting, t
 
         if (storageType==="Fleek"){
             storeFileFleek(fileKey, encryptedFile).then(()=>{
-                tx(writeContracts.E2EEContract.uploadDocument(
-                    42,
-                    fileHash.toString("hex"),
+                tx(writeContracts.Signchain.uploadDocument(
+                    fileHash,
                     fileKey,
                     encryptedKeys,
                     userAddress
@@ -180,12 +182,14 @@ export const uploadFile = async function(party, file, password, setSubmitting, t
             })
         }else {
             storeFileAWS(fileKey, encryptedFile).then(() => {
-                tx(writeContracts.E2EEContract.uploadDocument(
-                    42,
-                    fileHash.toString("hex"),
+                tx(writeContracts.Signchain.signAndShareDocument(
+                    fileHash,
                     fileKey,
                     encryptedKeys,
-                    userAddress
+                    userAddress,
+                    userAddress,
+                    signature[0],
+                    signature[1]
                 )).then((receipt) => {
                     setSubmitting(false)
                 })
@@ -197,15 +201,15 @@ export const uploadFile = async function(party, file, password, setSubmitting, t
 }
 
 export const getAllFile = async function(tx, writeContracts){
-    return await tx(writeContracts.E2EEContract.getAllDocIndex())
+    return await tx(writeContracts.Signchain.getAllDocIndex())
 }
 
 export const downloadFile = async function (docIndex,password, tx, writeContracts){
 
-    let cipherKey = await tx(writeContracts.E2EEContract.getCipherKey(docIndex))
+    let cipherKey = await tx(writeContracts.Signchain.getCipherKey(docIndex))
     console.log(cipherKey)
     cipherKey = JSON.parse(cipherKey)
-    const document = await tx(writeContracts.E2EEContract.getDocument(docIndex))
+    const document = await tx(writeContracts.Signchain.getDocument(docIndex))
     let encryptedKey = {
         iv: Buffer.from(cipherKey.iv,"hex"),
         ephemPublicKey: Buffer.from(cipherKey.ephemPublicKey,"hex"),
@@ -241,5 +245,25 @@ export const downloadFile = async function (docIndex,password, tx, writeContract
             })
         }
     })
+
+}
+
+const signDocument = async function (fileHash, tx, writeContracts , signer){
+
+    
+    const selfAddress = await signer.getAddress()
+    const replayNonce = await tx(writeContracts.Signchain.replayNonce(selfAddress))
+    
+
+    const params = [
+      ["bytes32", "uint"],
+      [
+          fileHash,
+          replayNonce
+      ]
+  ];
+
+  const paramsHash = ethers.utils.keccak256(ethers.utils.defaultAbiCoder.encode(...params));
+  return [replayNonce, await signer.signMessage(ethers.utils.arrayify(paramsHash))]
 
 }

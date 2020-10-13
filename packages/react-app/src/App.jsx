@@ -123,6 +123,7 @@ function App() {
                         tx={tx}
                         writeContracts={writeContracts}
                         readContracts={readContracts}
+                        userProvider={userProvider}
                         {...props}
                     />}/>
                 <Route exact path="/documents" render={(props) =>
