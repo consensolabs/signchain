@@ -8,6 +8,20 @@ import "@nomiclabs/buidler/console.sol";
 
 contract Signchain is DocumentRegistry, SigningModule {
 
-    // function registerAndSign()
+    function signAndShareDocument(bytes32 documentHash, string memory documentLocation,
+                                string[] memory key, address[] memory users, address[] memory signers,
+                                uint nonce, bytes memory signature) public {
+
+        uploadDocument(
+        documentHash,
+        documentLocation,
+        key,
+        users);
+    
+        addDocument(documentHash, signers);
+
+        signDocument(documentHash, nonce, signature);
+  
+    }
 
 }

@@ -15,9 +15,8 @@ contract DocumentRegistry {
     }
 
     struct Document{
-        uint256 caseId;
         string documentLocation;
-        string documentHash;
+        bytes32 documentHash;
         string[] key;
         address[] users;
     }
@@ -61,7 +60,6 @@ contract DocumentRegistry {
 
     /**
      * @dev Upload document
-     * @param caseId: Case Id
      * @param documentHash: doc Hash
      * @param documentLocation: doc location
      * @param key: Array to hold AesEnc Key for party's involved in document exchange
@@ -73,14 +71,12 @@ contract DocumentRegistry {
      * the index where current document is stored
      */
     function uploadDocument(
-        uint256 caseId,
-        string memory documentHash,
+        bytes32 documentHash,
         string memory documentLocation,
         string[] memory key,
         address[] memory users
     ) public {
         Document memory newDoc = Document({
-        caseId: caseId,
         documentLocation: documentLocation,
         documentHash: documentHash,
         key: key,

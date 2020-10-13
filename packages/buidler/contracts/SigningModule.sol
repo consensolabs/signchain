@@ -15,7 +15,6 @@ contract SigningModule {
     // @notice: Storing signers in a separate array instead of mapping signer to signature to reduce complexity
     struct SignedDocument {
         uint timestamp;
-        bytes ipfsHash;
         address[] signers;
         Signature[] signatures;
     }
@@ -55,14 +54,12 @@ contract SigningModule {
     /**
      * @dev Add a document that needs to be signed
      * @param docHash: keccak256 hash value of the original document
-     * @param ipfsHash: Document IPFS hash value
      * @param signers: Array of signers of the document
      */
-    function addDocument(bytes32 docHash, bytes memory ipfsHash, address[] memory signers) public{
+    function addDocument(bytes32 docHash, address[] memory signers) public{
 
         // NOTE: Only solution to assign empty Signature array without hitting the storage pointer issue
         signedDocuments[docHash].timestamp = now;
-        signedDocuments[docHash].ipfsHash = ipfsHash;
         signedDocuments[docHash].signers = signers;
 
     }

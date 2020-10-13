@@ -24,17 +24,15 @@ describe("Signchain", function () {
 
       const docHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes("docHash"))
       // Don't covers to bytes if it is a hexa string
-      const ipfsHash = ethers.utils.toUtf8Bytes('IPFS Hash')
       const signers = [account1._address, account2._address]
 
-      expect(await contractInstance.connect(account1).addDocument(docHash, ipfsHash, signers))
+      expect(await contractInstance.connect(account1).addDocument(docHash, signers))
   })
 
   it('Should sign the document', async () => {
 
     const docHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes("docHash"))
     // Don't covers to bytes if it is a hexa string
-    const ipfsHash = ethers.utils.toUtf8Bytes('IPFS Hash')
     const signers = [account1._address, account2._address]
 
     const replayNonce = await contractInstance.connect(account1).replayNonce(account1._address)

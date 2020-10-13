@@ -23,7 +23,7 @@
   },
   "scripts": {
     "chain": "buidler node",
-    "test": "buidler test --network localhost",
+    "test": "buidler test --network buidlerevm",
     "compile": "buidler compile",
     "deploy": "buidler run scripts/deploy.js && buidler run scripts/publish.js",
     "watch": "node scripts/watch.js",
