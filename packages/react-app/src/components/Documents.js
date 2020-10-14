@@ -19,6 +19,7 @@ export default function Documents(props) {
     const getAllDoc = async () =>{
         setLoading(true)
         const result = await index.getAllFile(props.tx, props.writeContracts)
+        console.log("RESULT", result)
         if(result.length>0) {
             let docs = []
             for (let i = 0; i < result.length; i++) {
