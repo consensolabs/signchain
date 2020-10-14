@@ -2,7 +2,7 @@
 import React, { useState } from 'react'
 import { Menu, Segment } from 'semantic-ui-react'
 import { Link, useHistory } from "react-router-dom";
-import {Account} from "./";
+import {Account} from "..";
 
 export default function Header({address,
     localProvider,
@@ -53,6 +53,8 @@ export default function Header({address,
           />
             </div>
             </Menu>
+
+            
         </Segment>
     )
 }

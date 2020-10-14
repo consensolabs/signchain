@@ -2,8 +2,8 @@
 import React, {useEffect, useState} from 'react'
 import { Button, Form, Grid, Header, Image, Message, Segment } from 'semantic-ui-react'
 import { Link, useHistory } from "react-router-dom";
-import logo from "../static/logo.png";
-const index = require('../lib/e2ee.js')
+import logo from '../../static/logo.png';
+const index = require('../../lib/e2ee.js')
 
 function LoginForm(props) {
 
