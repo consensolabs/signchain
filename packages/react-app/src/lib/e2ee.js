@@ -8,8 +8,8 @@ const ethers = require('ethers')
 
 AWS.config.update({
     region: 'ap-south-1',
-    accessKeyId: 'AKIAWRATGLMSFFKRKNT3',
-    secretAccessKey: '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'
+    accessKeyId: 'AKIAWRATGLMSBW237N5D',
+    secretAccessKey:  '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'
 })
 let s3 = new AWS.S3();
 

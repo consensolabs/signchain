@@ -58,3 +58,10 @@
 .App {
   text-align: center;
 }
+
+.ant-row .ant-row-middle {
+  color: #4c51bf !important;
+}
+.ant-typography {
+  color: #fff !important;
+}
