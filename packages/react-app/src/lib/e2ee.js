@@ -16,12 +16,12 @@ let s3 = new AWS.S3();
 const fleekApiKey = "t8DYhMZ1ztjUtOFC8qEDqg=="
 const fleekApiSecret = "XwZyU7RZ3H2Z1QHhUdFdi4MJx8j1axJm2hEq1olRWeU="
 
-export const registerUser = async function(name, email, privateKey, tx, writeContracts){
+export const registerUser = async function(name, email, privateKey, userType, tx, writeContracts){
     try {
         let publicKey = e2e.getPublicKey(privateKey)
         publicKey = publicKey.toString("hex")
         const result = await tx(writeContracts.Signchain.registerUser(
-            name, email, publicKey
+            name, email, publicKey, userType
         ))
         console.log("Register res:",result)
         return true

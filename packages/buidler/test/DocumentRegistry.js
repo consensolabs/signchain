@@ -4,6 +4,8 @@ const { solidity } = require("ethereum-waffle");
 
 use(solidity);
 
+const userType = {party: 0, notary: 1}
+
 describe("Signchain", function () {
   let contractInstance, account1, account2;
 
@@ -21,11 +23,11 @@ describe("Signchain", function () {
     });
 
     it('Should register PartyA', async () => {
-      expect(await contractInstance.connect(account1).registerUser("PartyA","a@gmail.com", "publicKeyPartyA"))
+      expect(await contractInstance.connect(account1).registerUser("PartyA","a@gmail.com", "publicKeyPartyA", userType.party))
   })
     
   it('Should  register PartyB', async () =>{
-    expect(await contractInstance.connect(account2).registerUser("PartyB","b@gmail.com", "publicKeyPartyA"))
+    expect(await contractInstance.connect(account2).registerUser("PartyB","b@gmail.com", "publicKeyPartyA", userType.party))
 });
 
 it('Should get all users', async () =>{

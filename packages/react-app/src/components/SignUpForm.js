@@ -14,6 +14,7 @@ function SignUpForm({writeContracts, tx}) {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const userType = {party: 0, notary: 1}
 
     useEffect(() => {
 
@@ -23,7 +24,7 @@ function SignUpForm({writeContracts, tx}) {
         const walletStatus = await index.createWallet(password)
         if (walletStatus){
             const accounts = await index.getAllAccounts(password)
-            const registrationStatus = await index.registerUser(name, email, accounts[0], tx, writeContracts)
+            const registrationStatus = await index.registerUser(name, email, accounts[0], userType.party, tx, writeContracts)
             if (registrationStatus) {
                 cookies.set('userAddress', registrationStatus);
                 history.push({
