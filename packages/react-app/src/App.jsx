@@ -18,6 +18,7 @@ import Dashboard from "./components/Dashboard";
 import Documents from "./components/Documents";
 import Profile from "./components/Profile";
 import Layout from "./components/Layout";
+import Steps from './components/Stepper/Steps'
 import { INFURA_ID, ETHERSCAN_KEY } from "./constants";
 
 const blockExplorer = "https://etherscan.io/"
@@ -83,7 +84,9 @@ function App() {
 
         <HashRouter>
           <div className="App">
+             
             <Switch>
+                
               <Route exact path="/" render={(props) =>
                   <SignUpForm
                       address={address}
@@ -117,7 +120,8 @@ function App() {
               blockExplorer={blockExplorer}
               
               >
-                <Route exact path="/dashboard" render={(props) =>
+                    <Steps/>
+                {/* <Route exact path="/dashboard" render={(props) =>
                     <Dashboard
                         address={address}
                         tx={tx}
@@ -125,8 +129,9 @@ function App() {
                         readContracts={readContracts}
                         userProvider={userProvider}
                         {...props}
-                    />}/>
-                <Route exact path="/documents" render={(props) =>
+                    />}/> */}
+                   
+         <Route exact path="/documents" render={(props) =>
                     <Documents
                         address={address}
                         tx={tx}

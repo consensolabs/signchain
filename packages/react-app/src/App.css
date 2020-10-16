@@ -65,3 +65,27 @@
 .ant-typography {
   color: #fff !important;
 }
+
+.button {
+  height: 40px;
+  width: 95px;
+  border-radius: 4px;
+}
+
+.stepper__container {
+  margin-top: "16px" !important;
+  border: "1px solid #cbd5e0";
+  padding: "17px";
+  border-radius: "4px";
+  background: "#fff";
+}
+
+.ant-steps-item-icon {
+  color: #48bb78 !important;
+  border: 1px solid #48bb78;
+  background-color: #48bb78;
+}
+
+.ant-steps-item-icon {
+  color: #48bb78 !important;
+}
