@@ -1,11 +1,24 @@
  /* eslint-disable */ 
 import React from 'react'
-import { Table } from 'semantic-ui-react'
+import { Table, Dropdown } from 'semantic-ui-react'
 import './Preview.css'
 const Preview = () => (
 <div className="preview__container">
     <div className="wrapper">
-            <Table singleLine>
+        
+            <div>
+                <h3 clasdName='h2__medium' style={{textAlign:'left'}}>Selected Party</h3>
+                 <div style={{marginBottom:'14px'}}>
+                <Dropdown
+                placeholder='Koshik Raj'
+                fluid
+                multiple
+                readOnly
+                selection />
+            </div>
+            </div>
+             <h3 clasdName='h2__medium' style={{textAlign:'left'}}>Selected File</h3>
+                <Table singleLine>
                 <Table.Header>
                 <Table.Row>
                     <Table.HeaderCell>File Name</Table.HeaderCell>
