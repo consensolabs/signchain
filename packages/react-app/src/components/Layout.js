@@ -3,7 +3,6 @@ import React, {Component} from "react";
 import { useHistory } from "react-router-dom";
 import MainHeader from "./Navigation/HeaderSem";
 import SidePannel from './Navigation/SidePannel'
-import logo from './../images/logo.png'
 import 'antd/dist/antd.css';
 import './Layout.css';
 import { Layout, } from 'antd';
@@ -18,22 +17,23 @@ export default function layout(props) {
 
     return (
 <>
-        {/* ['/login', '/signup'].includes(history.location.pathname) ?
+        {/* ['/documents', '/profile'].includes(history.location.pathname) ?
             null : */}
- <Layout>
-
-      <MainHeader {...props}/>
-    <Layout>
+            
+            <Layout>
+               <MainHeader {...props}/>
+            <Layout>
      
-    <SidePannel/>
-      <Layout >
-       
-        <Content className=" main-content">
-          { props.children }
-        </Content>
-      </Layout>
-    </Layout>
-  </Layout>
+            <SidePannel/>
+              
+              <Layout >
+              
+                <Content className=" main-content">
+                  { props.children }
+                </Content>
+              </Layout>
+           </Layout>
+   </Layout>
      </>      
     )
 }
