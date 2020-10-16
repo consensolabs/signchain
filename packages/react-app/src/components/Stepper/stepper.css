@@ -18,3 +18,28 @@
   color: rgba(255, 255, 255, 0.65);
   padding-top: 80px;
 }
+
+.step__container {
+  margin: 16px;
+}
+
+.ant-btn-primary {
+  background: var(--primary-color) !important;
+  border: none;
+}
+/* .ant-steps-item-icon {
+  background: var(--primary-color) !important;
+  border: none;
+} */
+
+.stepper__container {
+  margin-top: 16px;
+  border-radius: 4px;
+  background: #fff;
+  align-items: center;
+  justify-content: center;
+}
+
+.steps-content {
+  border: 1px solid #cbd5e0;
+}

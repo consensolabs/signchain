@@ -3,7 +3,7 @@ import React, {useEffect, useState} from 'react'
 import { Button, Dropdown, Grid, Header, Icon} from 'semantic-ui-react'
 import jenny from '../images/jenny.jpg'
 const index = require('../lib/e2ee.js')
-import Stepper from './Stepper/Steps'
+
 
 export default function Dashboard(props) {
 
@@ -106,7 +106,7 @@ export default function Dashboard(props) {
                 </Button>
                 <Button loading={submitting} positive style={{margin: '4rem'}} onClick={uploadFile}>Share file</Button>
             </Grid.Column>
-            <Stepper/>
+           
         </Grid>
     )
 }

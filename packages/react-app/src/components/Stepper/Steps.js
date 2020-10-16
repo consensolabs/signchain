@@ -1,75 +1,98 @@
  /* eslint-disable */ 
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React,{useState} from 'react';
+import Dashboard from '../Dashboard'
 import 'antd/dist/antd.css';
 import './stepper.css';
 import { Steps, Button, message } from 'antd';
+import { Grid, Image } from 'semantic-ui-react'
+import SelectFiles from './SelectFiles'
+import SelectParties from './SelectParties'
+import Preview from './Preview'
 
 const { Step } = Steps;
 
 const steps = [
   {
-    title: 'First',
-    content: 'First-content',
+    title: 'Select Files',
+    content: <SelectFiles/> ,
   },
   {
-    title: 'Second',
-    content: 'Second-content',
+    title: 'Select Party',
+    content: <SelectParties/>,
   },
   {
-    title: 'Last',
-    content: 'Last-content',
+    title: 'Preview and Share',
+    content: <Preview/>,
   },
 ];
 
-class stepper extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      current: 0,
-    };
+const stepper=()=> {
+
+const [current, setCurrent] = useState(0)
+  const next=()=> {
+ 
+    setCurrent(current +1);
   }
 
-  next() {
-    const current = this.state.current + 1;
-    this.setState({ current });
+ const prev=() =>{
+   
+    setCurrent(current-1);
   }
 
-  prev() {
-    const current = this.state.current - 1;
-    this.setState({ current });
-  }
-
-  render() {
-    const { current } = this.state;
+ 
+    // const { current } = this.state;
     return (
       <>
-        <Steps current={current}>
-          {steps.map(item => (
-            <Step key={item.title} title={item.title} />
-          ))}
-        </Steps>
+       
+       
+    {/* <Dashboard/> */}
+<div className="step__container">
+
+
+    <Grid columns='two' >
+    <Grid.Row>
+      <Grid.Column width={12}>
         <div className="steps-content">{steps[current].content}</div>
-        <div className="steps-action">
-          {current < steps.length - 1 && (
-            <Button type="primary" onClick={() => this.next()}>
-              Next
-            </Button>
-          )}
-          {current === steps.length - 1 && (
-            <Button type="primary" onClick={() => message.success('Processing complete!')}>
-              Done
-            </Button>
-          )}
+        
+        <div className="steps-action" style={{float:'right'}}>
+       
           {current > 0 && (
-            <Button style={{ margin: '0 8px' }} onClick={() => this.prev()}>
+            <Button style={{ margin: '0 8px' }} onClick={() => prev()}  className="button">
               Previous
             </Button>
           )}
+
+             {current < steps.length - 1 && (
+            <Button type="primary" onClick={() => next()} className="button">
+              Next
+            </Button>
+          )}
+          
+          {current === steps.length - 1 && (
+            <Button type="primary" onClick={() => message.success(' Files Shared Successfully!')}  className="button">
+              Share
+            </Button>
+          )}
         </div>
-      </>
+      </Grid.Column>
+
+      <Grid.Column width={4}>
+        <div className='stepper__container'>
+            <Steps direction="vertical" current={current} >
+          {steps.map(item => (
+            <Step key={item.title} title={item.title}  style={{display:'flex',border:'1px solid  #cbd5e0', alignItems:'center', padding:'10px'}}/>
+          ))}
+        </Steps>
+        </div>
+       
+      </Grid.Column>
+     
+    </Grid.Row>
+  </Grid>
+  </div>
+  </>
     );
-  }
+ 
 }
 
 export default stepper

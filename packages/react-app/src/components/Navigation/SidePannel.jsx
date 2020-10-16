@@ -18,7 +18,7 @@ function SidePannel() {
       <Menu  mode="inline" defaultSelectedKeys={['1']} style={{padding:24}}>
         <Menu.Item key="1" icon={<DashboardOutlined />}
        >
-         <Link TO='/dashboard/dashboard'>Dashboard</Link> 
+         <Link TO='/dashboard'>Dashboard</Link> 
         </Menu.Item>
         <Menu.Item key="2" icon={ <FileSearchOutlined />}
          >
