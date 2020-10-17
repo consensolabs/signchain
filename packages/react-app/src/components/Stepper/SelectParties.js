@@ -1,11 +1,17 @@
 /* eslint-disable */
 
 
-import React from 'react'
+import React, {useState} from 'react'
 import './SlectParties.css'
 import { Dropdown,Checkbox } from 'semantic-ui-react'
+import jenny from '../../images/jenny.jpg'
 
-  const SelectParties = () => (
+  const SelectParties = ({users, setParties}) => {
+
+    console.log(users)
+      
+    
+    return (
     <div className="parties__container">
         <div className="wrapper">
             <div style={{marginBottom:'14px'}}>
@@ -14,19 +20,22 @@ import { Dropdown,Checkbox } from 'semantic-ui-react'
                 fluid
                 multiple
                 search
-                selection />
-            </div>
-            <div style={{marginBottom:'14px'}}>
-                <Dropdown
-                    placeholder='Select Storage Provider'
-                    fluid
-                    multiple
-                    search
-                    selection 
-                    options={["AWS","Fleek"]}
-                
+                selection 
+                options={users.map((user)=> {
+                    return (
+                        {
+                            key: user.address,
+                            text: user.name,
+                            value: user,
+                            image: { avatar: true, src: jenny },
+                        }
+                    )
+
+                })}
+                onChange={(event, data)=> setParties(data.value)}
                 />
-           </div>
+            </div>
+
               <div style={{marginBottom:'14px', float:'left'}}>
                  <Checkbox label='Add Notary (optional)' />
            </div>
@@ -37,5 +46,6 @@ import { Dropdown,Checkbox } from 'semantic-ui-react'
     </div>
 
 )
+                }
 
 export default SelectParties

@@ -1,4 +1,6 @@
 # Signchain :file_folder: :key:
+
+![logo](./logo.png)
 > Digital signing tool for legal contracts
 
 
@@ -6,14 +8,14 @@ We have been working on an Arbitration platform for some time. While dealing wit
 
 We know that there has been plenty of effort in the area of electronic signing. But the existing solutions don't seem to operate on standards that are interoperable. In Signchain, we want to address the age-old issues of document signing such as tampering, delayed process, verification troubles, with the help of decentralized storage and open verification. We also want to address the interoperability concerns by using standardized identity, storage, and signing protocols.
 
-We plan on building an end to end to digital signing platform with the help of DIDs, end-to-end encrypted document solution on decentralized storages, and verifiable documents NFTs.
+We are building a digital signing platform with the help of DIDs, end-to-end encrypted document solution on decentralized storages, and verifiable documents NFTs.
 
 
 We plan on using the following technologies/ protocols:
 
 * NFT standards
 * Fleek / Filecoin/ Textile storage solutions
-* Ethereum DIDs
+* Ceramic DIDs
 
 
 ## quickstart
@@ -34,7 +36,7 @@ yarn install
 
 ```bash
 
-yarn start
+yarn run start
 
 ```
 
@@ -42,7 +44,7 @@ yarn start
 
 ```bash
 
-yarn chain
+yarn run chain
 
 ```
 
@@ -50,12 +52,12 @@ yarn chain
 
 ```bash
 
-yarn deploy
+yarn run deploy
 
 ```
 
-🔏 Edit your smart contract `YourContract.sol` in `packages/buidler/contracts`
+🔏 Smart contract is located at `packages/buidler/contracts`
 
-📝 Edit your frontend `App.jsx` in `packages/react-app/src`
+📝 React frontend is at `packages/react-app`
 
 📱 Open http://localhost:3000 to see the app

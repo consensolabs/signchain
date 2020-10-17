@@ -1,5 +1,5 @@
  /* eslint-disable */ 
-import React,{useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Dashboard from '../Dashboard'
 import 'antd/dist/antd.css';
 import './stepper.css';
@@ -9,24 +9,59 @@ import SelectFiles from './SelectFiles'
 import SelectParties from './SelectParties'
 import Preview from './Preview'
 
+const index = require('../../lib/e2ee.js')
+
 const { Step } = Steps;
 
 const steps = [
   {
-    title: 'Select Files',
-    content: <SelectFiles/> ,
+    title: 'Select Document',
+  content: (users, setParties, setFileInfo, parties, fileInfo) => {return <SelectFiles setFileInfo = {setFileInfo}/>} ,
   },
   {
-    title: 'Select Party',
-    content: <SelectParties/>,
+    title: 'Select Parties',
+    content: (users, setParties, setFileInfo, parties, fileInfo) => {return <SelectParties users = {users} setParties = {setParties}/>},
   },
   {
-    title: 'Preview and Share',
-    content: <Preview/>,
+    title: 'Preview and Sign',
+    content: (users, setParties, setFileInfo, parties, fileInfo) => {return <Preview parties = {parties} fileInfo = {fileInfo} />},
   },
 ];
 
-const stepper=()=> {
+const stepper=(props)=> {
+
+
+  const password = localStorage.getItem('password')
+  
+
+  const [signer, setSigner] = useState({})
+  const fileStorage =["AWS","Fleek"]
+  const [users, setUsers] = useState([])
+  const [caller, setCaller] = useState(null)
+  const [parties, setParties] = useState([])
+  const [file, selectFile] = useState({})
+  const [submitting, setSubmitting] = useState(false)
+  const [storageType, setStorage] = useState("AWS")
+  const [fileInfo, setFileInfo] = useState({})
+
+  let fileInputRef = React.createRef();
+
+  console.log(parties)
+  console.log(fileInfo)
+
+  useEffect(() => {
+        
+    if (props.writeContracts) {
+        setSigner(props.userProvider.getSigner())
+        index.getAllUsers(props.address, props.tx, props.writeContracts).then(result => {
+            console.log("Registered users:", result)
+            if (result.userArray.length > 0) {
+                setUsers(result.userArray)
+                setCaller(result.caller)
+            }
+        })
+    }
+}, [props.writeContracts])
 
 const [current, setCurrent] = useState(0)
   const next=()=> {
@@ -43,16 +78,13 @@ const [current, setCurrent] = useState(0)
     // const { current } = this.state;
     return (
       <>
-       
-       
-    {/* <Dashboard/> */}
 <div className="step__container">
 
 
     <Grid columns='two' >
     <Grid.Row>
       <Grid.Column width={12}>
-        <div className="steps-content">{steps[current].content}</div>
+        <div className="steps-content">{steps[current].content(users, setParties, setFileInfo, parties, fileInfo)}</div>
         
         <div className="steps-action" style={{float:'right'}}>
        
@@ -69,8 +101,12 @@ const [current, setCurrent] = useState(0)
           )}
           
           {current === steps.length - 1 && (
-            <Button type="primary" onClick={() => message.success(' Files Shared Successfully!')}  className="button">
-              Share
+            <Button type="primary" onClick={() => {
+              const allParties = parties;
+              allParties.push(caller);
+              console.log(allParties)
+              index.registerDoc(allParties, fileInfo.fileHash, fileInfo.fileKey, '123', setSubmitting, props.tx, props.writeContracts, signer)}}  className="button">
+              Sign & Share
             </Button>
           )}
         </div>

@@ -8,8 +8,8 @@ const ethers = require('ethers')
 
 AWS.config.update({
     region: 'ap-south-1',
-    accessKeyId: 'AKIAWRATGLMSBW237N5D',
-    secretAccessKey:  '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'
+    accessKeyId: 'AKIAWRATGLMSAR2AZYRL',
+    secretAccessKey:  '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'
 })
 let s3 = new AWS.S3();
 
@@ -199,6 +199,81 @@ export const uploadFile = async function(party, file, password, setSubmitting, t
         }
     }
 }
+
+
+
+export const registerDoc = async function(party, fileHash, fileKey, password, setSubmitting, tx, writeContracts, signer,
+                                         storageType){
+
+    let encryptedKeys=[]
+    let userAddress=[]
+    console.log(party)
+    const cipherKey = await e2e.generateCipherKey(password)
+
+    const signature = await signDocument(fileHash, tx, writeContracts , signer)
+
+    for (let i=0;i<party.length;i++){
+        let aesEncKey = await e2e.encryptKey(Buffer.from(party[i].key,"hex"), cipherKey)
+        let storeKey = {
+            iv: aesEncKey.iv.toString("hex"),
+            ephemPublicKey: aesEncKey.ephemPublicKey.toString("hex"),
+            ciphertext: aesEncKey.ciphertext.toString("hex"),
+            mac: aesEncKey.mac.toString("hex")
+        }
+        encryptedKeys.push(JSON.stringify(storeKey))
+        userAddress.push(party[i].address)
+    }
+
+        
+    tx(writeContracts.Signchain.signAndShareDocument(
+        fileHash,
+        fileKey,
+        encryptedKeys,
+        userAddress,
+        userAddress,
+        signature[0],
+        signature[1]
+    )).then((receipt) => {
+        setSubmitting(false)
+    })
+    
+}
+
+
+
+export const uploadDoc = async function(file, password, setSubmitting,
+                                         storageType, setFileInfo){
+
+    let encryptedKeys=[]
+    let userAddress=[]
+    const cipherKey = await e2e.generateCipherKey(password)
+    const fileSplit = file.name.split(".")
+    const fileFormat = fileSplit[fileSplit.length - 1]
+    let reader = new FileReader()
+    reader.readAsArrayBuffer(file)
+
+    reader.onload = async (val) => {
+        const fileInput = new Uint8Array(val.target.result)
+        const encryptedFile = await e2e.encryptFile(Buffer.from(fileInput), cipherKey)
+
+        const fileHash = e2e.calculateHash(fileInput)
+
+        const fileKey = fileHash.toString("hex").concat(".")
+            .concat(storageType).concat(".").concat(fileFormat)
+
+        if (storageType==="Fleek"){
+            await storeFileFleek(fileKey, encryptedFile)
+        }else {
+            await storeFileAWS(fileKey, encryptedFile)
+        }
+        setFileInfo({cipherKey: cipherKey, fileKey: fileKey, fileHash: fileHash, fileName: file.name, fileFormat: fileFormat})
+
+        
+    }
+
+    return {cipherKey: cipherKey}
+}
+
 
 export const getAllFile = async function(tx, writeContracts){
     return await tx(writeContracts.Signchain.getAllDocIndex())
