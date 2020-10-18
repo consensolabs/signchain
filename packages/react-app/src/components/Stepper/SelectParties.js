@@ -6,9 +6,11 @@ import './SlectParties.css'
 import { Dropdown,Checkbox } from 'semantic-ui-react'
 import jenny from '../../images/jenny.jpg'
 
-  const SelectParties = ({users, setParties}) => {
+  const SelectParties = ({users, parties, notaries, setParties, setDocNotary}) => {
 
-    console.log(users)
+    console.log(notaries)
+
+    const [displayNotary, setDisplayNotary] = useState(false)
       
     
     return (
@@ -36,9 +38,34 @@ import jenny from '../../images/jenny.jpg'
                 />
             </div>
 
-              <div style={{marginBottom:'14px', float:'left'}}>
-                 <Checkbox label='Add Notary (optional)' />
+            <div>
+                 <Checkbox label='Add Notary (optional)' checked={displayNotary} onChange={() => {setDisplayNotary(!displayNotary)}} />
            </div>
+           {
+           displayNotary ? <div>
+                <Dropdown
+                placeholder='Select a Notary'
+                fluid
+                search
+                selection 
+                options={notaries.map((user)=> {
+                    return (
+                        {
+                            key: user.address,
+                            text: user.name,
+                            value: user,
+                            image: { avatar: true, src: jenny },
+                        }
+                    )
+
+                })}
+                onChange={(event, data)=> {
+                    const allParties = parties;
+                    allParties.push(data.value);
+                    setParties(allParties); setDocNotary(data.value)}}
+                />
+            </div> : <div style={{marginBottom:'14px', float:'left'}} />
+            }
                 
               
    </div>

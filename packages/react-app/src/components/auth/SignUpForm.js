@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React, {useEffect, useState} from 'react'
-import { Button, Form, Grid, Header, Image, Message, Segment } from 'semantic-ui-react'
+import { Button, Checkbox, Form, Grid, Header, Image, Message, Segment } from 'semantic-ui-react'
 import { Link, useHistory } from "react-router-dom";
 import logo from '../../static/logo.png';
 import Cookies from 'universal-cookie';
@@ -14,6 +14,7 @@ function SignUpForm({writeContracts, tx}) {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [notary, setNotary] = useState(false);
     const userType = {party: 0, notary: 1}
 
     useEffect(() => {
@@ -24,7 +25,7 @@ function SignUpForm({writeContracts, tx}) {
         const walletStatus = await index.createWallet(password)
         if (walletStatus){
             const accounts = await index.getAllAccounts(password)
-            const registrationStatus = await index.registerUser(name, email, accounts[0], userType.party, tx, writeContracts)
+            const registrationStatus = await index.registerUser(name, email, accounts[0], notary ? userType.notary : userType.party, tx, writeContracts)
             if (registrationStatus) {
                 cookies.set('userAddress', registrationStatus);
                 history.push({
@@ -54,6 +55,9 @@ function SignUpForm({writeContracts, tx}) {
                             type='password'
                             onChange={(e, {value}) => setPassword(value)}
                         />
+                        <div style={{marginBottom:'14px', float:'left'}}>
+                        <Checkbox label="I'm a Notary" checked={notary} onChange={() => {setNotary(!notary)}} />
+                        </div>
 
                         <Button color='violet' fluid size='large' onClick={registerUser}>
                             Register

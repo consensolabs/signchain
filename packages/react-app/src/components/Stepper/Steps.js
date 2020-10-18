@@ -16,15 +16,15 @@ const { Step } = Steps;
 const steps = [
   {
     title: 'Select Document',
-  content: (users, setParties, setFileInfo, parties, fileInfo) => {return <SelectFiles setFileInfo = {setFileInfo}/>} ,
+  content: (args) => {return <SelectFiles setFileInfo = {args.setFileInfo} setSubmitting={args.setSubmitting}/>} ,
   },
   {
     title: 'Select Parties',
-    content: (users, setParties, setFileInfo, parties, fileInfo) => {return <SelectParties users = {users} setParties = {setParties}/>},
+    content: (args) => {return <SelectParties users = {args.users} parties = {args.parties} notaries = {args.notaries} setParties = {args.setParties} setDocNotary = {args.setDocNotary}/>},
   },
   {
     title: 'Preview and Sign',
-    content: (users, setParties, setFileInfo, parties, fileInfo) => {return <Preview parties = {parties} fileInfo = {fileInfo} />},
+    content: (args) => {return <Preview parties = {args.parties} fileInfo = {args.fileInfo} />},
   },
 ];
 
@@ -37,6 +37,8 @@ const stepper=(props)=> {
   const [signer, setSigner] = useState({})
   const fileStorage =["AWS","Fleek"]
   const [users, setUsers] = useState([])
+  const [notaries, setNotaries] = useState([])
+  const [docNotary, setDocNotary] = useState(null)
   const [caller, setCaller] = useState(null)
   const [parties, setParties] = useState([])
   const [file, selectFile] = useState({})
@@ -46,7 +48,7 @@ const stepper=(props)=> {
 
   let fileInputRef = React.createRef();
 
-  console.log(parties)
+  console.log(notaries)
   console.log(fileInfo)
 
   useEffect(() => {
@@ -55,10 +57,11 @@ const stepper=(props)=> {
         setSigner(props.userProvider.getSigner())
         index.getAllUsers(props.address, props.tx, props.writeContracts).then(result => {
             console.log("Registered users:", result)
-            if (result.userArray.length > 0) {
-                setUsers(result.userArray)
-                setCaller(result.caller)
-            }
+            
+            setUsers(result.userArray)
+            setCaller(result.caller)
+            setNotaries(result.notaryArray)
+            
         })
     }
 }, [props.writeContracts])
@@ -84,7 +87,7 @@ const [current, setCurrent] = useState(0)
     <Grid columns='two' >
     <Grid.Row>
       <Grid.Column width={12}>
-        <div className="steps-content">{steps[current].content(users, setParties, setFileInfo, parties, fileInfo)}</div>
+        <div className="steps-content">{steps[current].content({users, notaries, setParties, setFileInfo, parties, fileInfo, setSubmitting, setDocNotary})}</div>
         
         <div className="steps-action" style={{float:'right'}}>
        
@@ -95,17 +98,16 @@ const [current, setCurrent] = useState(0)
           )}
 
              {current < steps.length - 1 && (
-            <Button type="primary" onClick={() => next()} className="button">
+            <Button type="primary" loading={submitting} onClick={() => next()} className="button">
               Next
             </Button>
           )}
           
           {current === steps.length - 1 && (
-            <Button type="primary" onClick={() => {
+            <Button type="primary" loading={submitting} onClick={() => {
               const allParties = parties;
               allParties.push(caller);
-              console.log(allParties)
-              index.registerDoc(allParties, fileInfo.fileHash, fileInfo.fileKey, '123', setSubmitting, props.tx, props.writeContracts, signer)}}  className="button">
+              index.registerDoc(allParties, fileInfo.fileHash, fileInfo.fileKey, password, setSubmitting, props.tx, props.writeContracts, signer, docNotary)}}  className="button">
               Sign & Share
             </Button>
           )}

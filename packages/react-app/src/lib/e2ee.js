@@ -8,13 +8,13 @@ const ethers = require('ethers')
 
 AWS.config.update({
     region: 'ap-south-1',
-    accessKeyId: 'AKIAWRATGLMSAR2AZYRL',
-    secretAccessKey:  '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'
+    accessKeyId: '****',
+    secretAccessKey:  '****'
 })
 let s3 = new AWS.S3();
 
-const fleekApiKey = "t8DYhMZ1ztjUtOFC8qEDqg=="
-const fleekApiSecret = "XwZyU7RZ3H2Z1QHhUdFdi4MJx8j1axJm2hEq1olRWeU="
+const fleekApiKey = "****"
+const fleekApiSecret = "****"
 
 export const registerUser = async function(name, email, privateKey, userType, tx, writeContracts){
     try {
@@ -54,24 +54,28 @@ export const loginUser = async function(privateKey, tx, writeContracts){
 
 export const getAllUsers = async function(loggedUser, tx, writeContracts){
     const registeredUsers = await tx(writeContracts.Signchain.getAllUsers())
+    const userType = {party: 0, notary: 1}
     let caller
     let userArray = []
+    let notaryArray = []
     try {
         for (let i = 0; i < registeredUsers.length; i++){
             const result = await tx(writeContracts.Signchain.storeUser(registeredUsers[i]))
-            if (loggedUser.toLowerCase()!==registeredUsers[i].toLowerCase()) {
-                const value = {
-                    address: registeredUsers[i],
-                    name: result.name,
-                    key: result.publicKey,
-                }
+            const value = {
+                address: registeredUsers[i],
+                name: result.name,
+                email: result.email,
+                key: result.publicKey,
+                userType: result.userType,
+            }
+            if (loggedUser.toLowerCase()==registeredUsers[i].toLowerCase()) {
+                caller =value
+                
+            }else if (result.userType == userType.notary){
+                notaryArray.push(value)
+            }
+            else {
                 userArray.push(value)
-            }else{
-                caller ={
-                    address: registeredUsers[i],
-                    name: result.name,
-                    key: result.publicKey,
-                }
             }
         }
     }
@@ -80,6 +84,7 @@ export const getAllUsers = async function(loggedUser, tx, writeContracts){
     }
     const userDetails = {
         userArray:userArray,
+        notaryArray: notaryArray,
         caller:caller
     }
     return userDetails
@@ -202,12 +207,15 @@ export const uploadFile = async function(party, file, password, setSubmitting, t
 
 
 
-export const registerDoc = async function(party, fileHash, fileKey, password, setSubmitting, tx, writeContracts, signer,
-                                         storageType){
+export const registerDoc = async function(party, fileHash, fileKey, password, setSubmitting, tx, writeContracts, signer, notary){
+
+    console.log(notary)
 
     let encryptedKeys=[]
     let userAddress=[]
-    console.log(party)
+
+    setSubmitting(true)
+
     const cipherKey = await e2e.generateCipherKey(password)
 
     const signature = await signDocument(fileHash, tx, writeContracts , signer)
@@ -232,7 +240,9 @@ export const registerDoc = async function(party, fileHash, fileKey, password, se
         userAddress,
         userAddress,
         signature[0],
-        signature[1]
+        signature[1],
+        notary ? notary.address : '0x0000000000000000000000000000000000000000',
+        {value: ethers.utils.parseUnits(notary ? "0.1" : "0", "ether")}
     )).then((receipt) => {
         setSubmitting(false)
     })
@@ -266,6 +276,7 @@ export const uploadDoc = async function(file, password, setSubmitting,
         }else {
             await storeFileAWS(fileKey, encryptedFile)
         }
+        setSubmitting(false)
         setFileInfo({cipherKey: cipherKey, fileKey: fileKey, fileHash: fileHash, fileName: file.name, fileFormat: fileFormat})
 
         

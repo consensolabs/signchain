@@ -12,10 +12,9 @@ const { Dragger } = Upload;
 const fileStorage =["AWS","Fleek"]
 
 
-const SelectFiles=({setFileInfo})=>{
+const SelectFiles=({setFileInfo, setSubmitting})=>{
 
 const [file, selectFile] = useState({})
-    const [submitting, setSubmitting] = useState(false)
     const [storageType, setStorage] = useState("AWS")
     console.log(storageType)
 
