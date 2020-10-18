@@ -8,13 +8,13 @@ const ethers = require('ethers')
 
 AWS.config.update({
     region: 'ap-south-1',
-    accessKeyId: '********************',
-    secretAccessKey: '*******************************'
+    accessKeyId: '****',
+    secretAccessKey:  '****'
 })
 let s3 = new AWS.S3();
 
-const fleekApiKey = "t8DYhMZ1ztjUtOFC8qEDqg=="
-const fleekApiSecret = "XwZyU7RZ3H2Z1QHhUdFdi4MJx8j1axJm2hEq1olRWeU="
+const fleekApiKey = "****"
+const fleekApiSecret = "****"
 
 export const registerUser = async function(name, email, privateKey, userType, tx, writeContracts){
     try {
@@ -54,24 +54,28 @@ export const loginUser = async function(privateKey, tx, writeContracts){
 
 export const getAllUsers = async function(loggedUser, tx, writeContracts){
     const registeredUsers = await tx(writeContracts.Signchain.getAllUsers())
+    const userType = {party: 0, notary: 1}
     let caller
     let userArray = []
+    let notaryArray = []
     try {
         for (let i = 0; i < registeredUsers.length; i++){
             const result = await tx(writeContracts.Signchain.storeUser(registeredUsers[i]))
-            if (loggedUser.toLowerCase()!==registeredUsers[i].toLowerCase()) {
-                const value = {
-                    address: registeredUsers[i],
-                    name: result.name,
-                    key: result.publicKey,
-                }
+            const value = {
+                address: registeredUsers[i],
+                name: result.name,
+                email: result.email,
+                key: result.publicKey,
+                userType: result.userType,
+            }
+            if (loggedUser.toLowerCase()==registeredUsers[i].toLowerCase()) {
+                caller =value
+                
+            }else if (result.userType == userType.notary){
+                notaryArray.push(value)
+            }
+            else {
                 userArray.push(value)
-            }else{
-                caller ={
-                    address: registeredUsers[i],
-                    name: result.name,
-                    key: result.publicKey,
-                }
             }
         }
     }
@@ -80,6 +84,7 @@ export const getAllUsers = async function(loggedUser, tx, writeContracts){
     }
     const userDetails = {
         userArray:userArray,
+        notaryArray: notaryArray,
         caller:caller
     }
     return userDetails
@@ -201,6 +206,7 @@ export const uploadFile = async function(party, file, password, setSubmitting, t
     }
 }
 
+
 export const getAllFile = async function(tx, writeContracts, address){
     const documents = await tx(writeContracts.Signchain.getAllDocument())
     let result = []
@@ -233,6 +239,85 @@ export const getAllFile = async function(tx, writeContracts, address){
     return result
     //return await tx(writeContracts.Signchain.getAllDocIndex())
 }
+
+export const registerDoc = async function(party, fileHash, fileKey, password, setSubmitting, tx, writeContracts, signer, notary){
+
+    console.log(notary)
+
+    let encryptedKeys=[]
+    let userAddress=[]
+
+    setSubmitting(true)
+
+    const cipherKey = await e2e.generateCipherKey(password)
+
+    const signature = await signDocument(fileHash, tx, writeContracts , signer)
+
+    for (let i=0;i<party.length;i++){
+        let aesEncKey = await e2e.encryptKey(Buffer.from(party[i].key,"hex"), cipherKey)
+        let storeKey = {
+            iv: aesEncKey.iv.toString("hex"),
+            ephemPublicKey: aesEncKey.ephemPublicKey.toString("hex"),
+            ciphertext: aesEncKey.ciphertext.toString("hex"),
+            mac: aesEncKey.mac.toString("hex")
+        }
+        encryptedKeys.push(JSON.stringify(storeKey))
+        userAddress.push(party[i].address)
+    }
+
+        
+    tx(writeContracts.Signchain.signAndShareDocument(
+        fileHash,
+        fileKey,
+        encryptedKeys,
+        userAddress,
+        userAddress,
+        signature[0],
+        signature[1],
+        notary ? notary.address : '0x0000000000000000000000000000000000000000',
+        {value: ethers.utils.parseUnits(notary ? "0.1" : "0", "ether")}
+    )).then((receipt) => {
+        setSubmitting(false)
+    })
+    
+}
+
+
+
+export const uploadDoc = async function(file, password, setSubmitting,
+                                         storageType, setFileInfo){
+
+    let encryptedKeys=[]
+    let userAddress=[]
+    const cipherKey = await e2e.generateCipherKey(password)
+    const fileSplit = file.name.split(".")
+    const fileFormat = fileSplit[fileSplit.length - 1]
+    let reader = new FileReader()
+    reader.readAsArrayBuffer(file)
+
+    reader.onload = async (val) => {
+        const fileInput = new Uint8Array(val.target.result)
+        const encryptedFile = await e2e.encryptFile(Buffer.from(fileInput), cipherKey)
+
+        const fileHash = e2e.calculateHash(fileInput)
+
+        const fileKey = fileHash.toString("hex").concat(".")
+            .concat(storageType).concat(".").concat(fileFormat)
+
+        if (storageType==="Fleek"){
+            await storeFileFleek(fileKey, encryptedFile)
+        }else {
+            await storeFileAWS(fileKey, encryptedFile)
+        }
+        setSubmitting(false)
+        setFileInfo({cipherKey: cipherKey, fileKey: fileKey, fileHash: fileHash, fileName: file.name, fileFormat: fileFormat})
+
+        
+    }
+
+    return {cipherKey: cipherKey}
+}
+
 
 export const downloadFile = async function (docHash,password, tx, writeContracts){
 
