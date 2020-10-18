@@ -8,8 +8,8 @@ const ethers = require('ethers')
 
 AWS.config.update({
     region: 'ap-south-1',
-    accessKeyId: '********************',
-    secretAccessKey: '*******************************'
+    accessKeyId: 'AKIAWRATGLMSNS3CRAJI',
+    secretAccessKey: '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'
 })
 let s3 = new AWS.S3();
 
@@ -207,16 +207,12 @@ export const getAllFile = async function(tx, writeContracts, address){
     for (let i=0;i<documents.length;i++){
         const hash = documents[i];
         const signDetails = await tx(writeContracts.Signchain.getSignedDocuments(hash))
-        //console.log("signDetails:", signDetails)
         let signStatus = true
         let partySigned = false
         if (signDetails.signers.length !== signDetails.signatures.length){
-            for (let j=0 ;j<signDetails.signatures.length;j++){
-                console.log("Signa:",signDetails.signatures[j][0])
-                if (signDetails.signatures[j][0] === address.toString()){
-                    partySigned = true
-                    break
-                }
+            const array = signDetails.signatures.filter((item) => item[0]===address.toString())
+            if (array.length===1){
+                partySigned = true
             }
             signStatus = false;
         }else{
@@ -231,7 +227,6 @@ export const getAllFile = async function(tx, writeContracts, address){
         result.push(value)
     }
     return result
-    //return await tx(writeContracts.Signchain.getAllDocIndex())
 }
 
 export const downloadFile = async function (docHash,password, tx, writeContracts){
