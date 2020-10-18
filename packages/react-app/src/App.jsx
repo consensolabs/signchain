@@ -12,12 +12,13 @@ import { useUserAddress } from "eth-hooks";
 import { useExchangePrice, useGasPrice, useUserProvider, useContractLoader, useBalance, } from "./hooks";
 import { Transactor } from "./helpers";
 import {Account, Faucet} from "./components";
-import SignUpForm from "./components/SignUpForm";
-import LoginForm from "./components/LoginForm";
+import SignUpForm from "./components/auth/SignUpForm";
+import LoginForm from "./components/auth/LoginForm";
 import Dashboard from "./components/Dashboard";
 import Documents from "./components/Documents";
 import Profile from "./components/Profile";
 import Layout from "./components/Layout";
+import Steps from './components/Stepper/Steps'
 import { INFURA_ID, ETHERSCAN_KEY } from "./constants";
 
 const blockExplorer = "https://etherscan.io/"
@@ -83,7 +84,9 @@ function App() {
 
         <HashRouter>
           <div className="App">
+             
             <Switch>
+                
               <Route exact path="/" render={(props) =>
                   <SignUpForm
                       address={address}
@@ -117,8 +120,9 @@ function App() {
               blockExplorer={blockExplorer}
               
               >
+                    {/* <Steps/> */}
                 <Route exact path="/dashboard" render={(props) =>
-                    <Dashboard
+                    <Steps
                         address={address}
                         tx={tx}
                         writeContracts={writeContracts}
@@ -126,7 +130,8 @@ function App() {
                         userProvider={userProvider}
                         {...props}
                     />}/>
-                <Route exact path="/documents" render={(props) =>
+                   
+         <Route exact path="/documents" render={(props) =>
                     <Documents
                         address={address}
                         tx={tx}

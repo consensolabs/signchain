@@ -19,6 +19,7 @@ export default function Documents(props) {
     const getAllDoc = async () =>{
         setLoading(true)
         const result = await index.getAllFile(props.tx, props.writeContracts)
+        console.log("RESULT", result)
         if(result.length>0) {
             let docs = []
             for (let i = 0; i < result.length; i++) {
@@ -37,12 +38,20 @@ export default function Documents(props) {
 
     return (
         <div>
-        <Table celled striped style={{maxWidth: '50%'}}>
+        <Table singleLine striped >
             <Table.Header>
                 <Table.Row>
                     <Table.HeaderCell colSpan='3'>Your documents</Table.HeaderCell>
                 </Table.Row>
             </Table.Header>
+            <Table.Header>
+            <Table.Row>
+            <Table.HeaderCell>Name</Table.HeaderCell>
+            <Table.HeaderCell>Registration Date</Table.HeaderCell>
+            <Table.HeaderCell>Notarised</Table.HeaderCell>
+            <Table.HeaderCell>Action</Table.HeaderCell>
+            </Table.Row>
+        </Table.Header>
 
             <Table.Body>
                 {
@@ -54,6 +63,7 @@ export default function Documents(props) {
                                         <Icon name='file outline'/> Document {index}
                                     </Table.Cell>
                                     <Table.Cell>10 hours ago</Table.Cell>
+                                    <Table.Cell>False</Table.Cell>
                                     <Table.Cell collapsing textAlign='right'>
                                         <Button icon='download' onClick={()=>downloadFile(index)}/>
                                     </Table.Cell>

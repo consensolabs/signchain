@@ -1,0 +1,10 @@
+.parties__container {
+  display: flex;
+  margin-top: -48px !important;
+  justify-content: center;
+}
+
+.wrapper {
+  width: 850px;
+  margin-bottom: 14px !important;
+}

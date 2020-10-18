@@ -4,6 +4,7 @@ import { Button, Dropdown, Grid, Header, Icon} from 'semantic-ui-react'
 import jenny from '../images/jenny.jpg'
 const index = require('../lib/e2ee.js')
 
+
 export default function Dashboard(props) {
 
     const password = localStorage.getItem('password')
@@ -105,6 +106,7 @@ export default function Dashboard(props) {
                 </Button>
                 <Button loading={submitting} positive style={{margin: '4rem'}} onClick={uploadFile}>Share file</Button>
             </Grid.Column>
+           
         </Grid>
     )
 }

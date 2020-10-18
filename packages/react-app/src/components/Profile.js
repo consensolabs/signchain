@@ -17,8 +17,10 @@ export default function Profile(props) {
     }, [props.writeContracts] )
 
     return (
-        <Header as='h2'>
+        <Header className="test"as='h2'>
             <Image circular src='https://react.semantic-ui.com/images/avatar/large/patrick.png' /> {user.name}
+
+          
         </Header>
     )
 }
