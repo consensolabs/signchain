@@ -8,8 +8,8 @@ const ethers = require('ethers')
 
 AWS.config.update({
     region: 'ap-south-1',
-    accessKeyId: 'AKIAWRATGLMSFFKRKNT3',
-    secretAccessKey: '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'
+    accessKeyId: '********************',
+    secretAccessKey: '*******************************'
 })
 let s3 = new AWS.S3();
 
@@ -189,7 +189,8 @@ export const uploadFile = async function(party, file, password, setSubmitting, t
                     userAddress,
                     userAddress,
                     signature[0],
-                    signature[1]
+                    signature[1],
+                    '0x0000000000000000000000000000000000000000'
                 )).then((receipt) => {
                     setSubmitting(false)
                 })
@@ -200,16 +201,45 @@ export const uploadFile = async function(party, file, password, setSubmitting, t
     }
 }
 
-export const getAllFile = async function(tx, writeContracts){
-    return await tx(writeContracts.Signchain.getAllDocIndex())
+export const getAllFile = async function(tx, writeContracts, address){
+    const documents = await tx(writeContracts.Signchain.getAllDocument())
+    let result = []
+    for (let i=0;i<documents.length;i++){
+        const hash = documents[i];
+        const signDetails = await tx(writeContracts.Signchain.getSignedDocuments(hash))
+        //console.log("signDetails:", signDetails)
+        let signStatus = true
+        let partySigned = false
+        if (signDetails.signers.length !== signDetails.signatures.length){
+            for (let j=0 ;j<signDetails.signatures.length;j++){
+                console.log("Signa:",signDetails.signatures[j][0])
+                if (signDetails.signatures[j][0] === address.toString()){
+                    partySigned = true
+                    break
+                }
+            }
+            signStatus = false;
+        }else{
+            signStatus = true
+            partySigned = true
+        }
+        let value = {
+            hash: hash,
+            signStatus: signStatus,
+            partySigned: partySigned
+        }
+        result.push(value)
+    }
+    return result
+    //return await tx(writeContracts.Signchain.getAllDocIndex())
 }
 
-export const downloadFile = async function (docIndex,password, tx, writeContracts){
+export const downloadFile = async function (docHash,password, tx, writeContracts){
 
-    let cipherKey = await tx(writeContracts.Signchain.getCipherKey(docIndex))
+    let cipherKey = await tx(writeContracts.Signchain.getCipherKey(docHash))
     console.log(cipherKey)
     cipherKey = JSON.parse(cipherKey)
-    const document = await tx(writeContracts.Signchain.getDocument(docIndex))
+    const document = await tx(writeContracts.Signchain.getDocument(docHash))
     let encryptedKey = {
         iv: Buffer.from(cipherKey.iv,"hex"),
         ephemPublicKey: Buffer.from(cipherKey.ephemPublicKey,"hex"),
@@ -245,7 +275,6 @@ export const downloadFile = async function (docIndex,password, tx, writeContract
             })
         }
     })
-
 }
 
 const signDocument = async function (fileHash, tx, writeContracts , signer){
@@ -266,4 +295,16 @@ const signDocument = async function (fileHash, tx, writeContracts , signer){
   const paramsHash = ethers.utils.keccak256(ethers.utils.defaultAbiCoder.encode(...params));
   return [replayNonce, await signer.signMessage(ethers.utils.arrayify(paramsHash))]
 
+}
+
+export const attachSignature = async function(fileHash, tx, writeContracts , signer){
+
+    const signature = await signDocument(fileHash, tx, writeContracts , signer)
+    const signDetails = await tx(writeContracts.Signchain.signDocument(
+        fileHash,
+        signature[0],
+        signature[1]
+    ))
+    console.log("signDetails:",signDetails)
+    return true
 }

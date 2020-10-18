@@ -131,6 +131,7 @@ function App() {
                         address={address}
                         tx={tx}
                         writeContracts={writeContracts}
+                        userProvider={userProvider}
                         {...props}
                     />}/>
                 <Route exact path="/profile" render={(props) =>

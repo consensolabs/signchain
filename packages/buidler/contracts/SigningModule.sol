@@ -99,6 +99,10 @@ contract SigningModule {
 
     }
 
+    function getSignedDocuments(bytes32 docHash) public view returns(SignedDocument memory doc){
+        return signedDocuments[docHash];
+    }
+
     /**
      * @return true if the document is signed.
     */
