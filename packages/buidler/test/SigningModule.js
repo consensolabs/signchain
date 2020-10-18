@@ -58,12 +58,5 @@ describe("Signchain", function () {
       isSigned = await contractInstance.connect(account1).isDocumentSigned(docHash)
       expect(isSigned).is.true
     })
-
-    it('Should get details', async () => {
-      const docHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes("docHash"))
-      const result = await contractInstance.connect(account1).getSignedDocuments(docHash)
-      expect(result.length).is.equal(1)
-    })
-
   });
 });
