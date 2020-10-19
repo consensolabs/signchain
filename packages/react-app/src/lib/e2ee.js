@@ -13,8 +13,8 @@ AWS.config.update({
 })
 let s3 = new AWS.S3();
 
-const fleekApiKey = "****"
-const fleekApiSecret = "****"
+const fleekApiKey = "7niUfvisrFTfxJD8nyEBFg=="
+const fleekApiSecret = "UVlyrvRV/SWMLlvCBah18Eg9A4b4Ujqq0sFxbi35b+E="
 
 export const registerUser = async function(name, email, privateKey, userType, tx, writeContracts){
     try {
@@ -217,12 +217,9 @@ export const getAllFile = async function(tx, writeContracts, address){
         let signStatus = true
         let partySigned = false
         if (signDetails.signers.length !== signDetails.signatures.length){
-            for (let j=0 ;j<signDetails.signatures.length;j++){
-                console.log("Signa:",signDetails.signatures[j][0])
-                if (signDetails.signatures[j][0] === address.toString()){
-                    partySigned = true
-                    break
-                }
+            const array = signDetails.signatures.filter((item) => item[0]===address.toString())
+            if (array.length===1){
+                partySigned = true
             }
             signStatus = false;
         }else{
@@ -240,7 +237,6 @@ export const getAllFile = async function(tx, writeContracts, address){
         result.push(value)
     }
     return result
-    //return await tx(writeContracts.Signchain.getAllDocIndex())
 }
 
 export const registerDoc = async function(party, fileHash, fileKey, password, setSubmitting, tx, writeContracts, signer, notary){
