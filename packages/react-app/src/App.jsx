@@ -120,16 +120,16 @@ function App() {
               blockExplorer={blockExplorer}
               
               >
-                    <Steps/>
-                {/* <Route exact path="/dashboard" render={(props) =>
-                    <Dashboard
+                    {/* <Steps/> */}
+                <Route exact path="/dashboard" render={(props) =>
+                    <Steps
                         address={address}
                         tx={tx}
                         writeContracts={writeContracts}
                         readContracts={readContracts}
                         userProvider={userProvider}
                         {...props}
-                    />}/> */}
+                    />}/>
                    
          <Route exact path="/documents" render={(props) =>
                     <Documents

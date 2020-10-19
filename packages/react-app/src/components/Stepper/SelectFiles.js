@@ -1,41 +1,79 @@
- /* eslint-disable */ 
-import React from 'react';
-import 'antd/dist/antd.css';
-import upload from '../../images/upload.png'
-import { Upload, message } from 'antd';
+/* eslint-disable */
+
+import React, { useState } from "react";
+import "antd/dist/antd.css";
+import upload from "../../images/upload.png";
+import { Upload, message } from "antd";
+import { Dropdown } from "semantic-ui-react";
+
+const index = require("../../lib/e2ee.js");
 
 const { Dragger } = Upload;
 
-const props = {
-  name: 'file',
-  multiple: true,
-  action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
-  onChange(info) {
-    const { status } = info.file;
-    if (status !== 'uploading') {
-      console.log(info.file, info.fileList);
+const fileStorage = ["AWS", "Fleek"];
+
+const SelectFiles = ({ setFileInfo, setSubmitting }) => {
+  const [file, selectFile] = useState({});
+  const [storageType, setStorage] = useState("AWS");
+  console.log(storageType);
+
+  const props = {
+    name: "file",
+    multiple: true,
+    customRequest: data => {
+      uploadFile(data.file);
+    },
+    onChange(status) {
+      if (status) {
+        message.success(` file uploaded successfully.`);
+      } else {
+        message.error(`file upload failed.`);
+      }
+    },
+  };
+
+  const uploadFile = async file => {
+    let partiesInvolved = [];
+    setSubmitting(true);
+    const receipt = await index.uploadDoc(file, "123", setSubmitting, storageType, setFileInfo);
+    console.log("File uploaded!", receipt);
+    if (receipt) {
+      return true;
     }
-    if (status === 'done') {
-      message.success(`${info.file.name} file uploaded successfully.`);
-    } else if (status === 'error') {
-      message.error(`${info.file.name} file upload failed.`);
-    }
-  },
+  };
+
+  return (
+    <div className="parties__container">
+      <div className="wrapper">
+        <div style={{ marginBottom: "14px" }}>
+          <Dropdown
+            placeholder="Select Storage Provider"
+            fluid
+            selection
+            options={fileStorage.map(storage => {
+              return {
+                key: storage,
+                text: storage,
+                value: storage,
+              };
+            })}
+            onChange={(event, data) => {
+              setStorage(data.value);
+            }}
+          />
+        </div>
+
+        <div style={{ marginBottom: "14px" }}>
+          <Dragger {...props} style={{ border: "none" }}>
+            <p className="ant-upload-drag-icon">
+              <img src={upload} alt="" srcset="" />
+            </p>
+            <p className="ant-upload-text">Click or drag file to this area to upload</p>
+          </Dragger>
+        </div>
+      </div>
+    </div>
+  );
 };
 
-const SelectFiles=()=>{
- return(
-   
- <Dragger {...props} style={{marginTop:'-40px', border:'none'}}>
-    <p className="ant-upload-drag-icon">
-   
-     <img src={upload} alt="" srcset=""/>
-    </p>
-    <p className="ant-upload-text">Click or drag file to this area to upload</p>
-   
-  </Dragger>    
-
-);
-}
-
-export default SelectFiles
+export default SelectFiles;

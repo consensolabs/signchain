@@ -6,12 +6,19 @@ import "@nomiclabs/buidler/console.sol";
 
 contract DocumentRegistry {
 
+    enum UserType {
+        party,
+        notary
+    }
+
     struct UserSchema {
         string name;
         string email;
         bool status;
         string publicKey;
         uint256[] docIndex;
+        UserType userType;
+        
     }
 
     struct Document{
@@ -38,7 +45,8 @@ contract DocumentRegistry {
     function registerUser(
         string memory userName,
         string memory userEmail,
-        string memory publicKey
+        string memory publicKey,
+        UserType userType
     ) public{
         require(!storeUser[msg.sender].status, "Should not be registered before!");
 
@@ -46,6 +54,7 @@ contract DocumentRegistry {
         storeUser[msg.sender].email = userEmail;
         storeUser[msg.sender].publicKey = publicKey;
         storeUser[msg.sender].status = true;
+        storeUser[msg.sender].userType = userType;
         registeredUsers.push(msg.sender);
         console.log("User registered");
     }

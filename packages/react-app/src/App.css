@@ -68,7 +68,8 @@
 
 .button {
   height: 40px;
-  width: 95px;
+
+  min-width: 95px;
   border-radius: 4px;
 }
 
@@ -88,4 +89,8 @@
 
 .ant-steps-item-icon {
   color: #48bb78 !important;
+}
+
+.main__container {
+  margin: 16px;
 }
