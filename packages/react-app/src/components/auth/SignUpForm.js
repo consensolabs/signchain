@@ -1,13 +1,14 @@
 /* eslint-disable */
 import React, { useEffect, useState } from "react";
+import "./Form.css";
 import { Button, Checkbox, Form, Grid, Header, Image, Message, Segment } from "semantic-ui-react";
 import { Link, useHistory } from "react-router-dom";
-import "./Form.css";
 import logo from "../../images/logoInverted.png";
 import Cookies from "universal-cookie";
 const cookies = new Cookies();
 const index = require("../../lib/e2ee.js");
 import Rocket from "./img/img-2.svg";
+import test from "./img/test.png";
 
 function SignUpForm({ writeContracts, tx }) {
   let history = useHistory();
@@ -43,63 +44,13 @@ function SignUpForm({ writeContracts, tx }) {
 
   return (
     <>
-      <Grid textAlign="center" style={{ height: "100vh" }} verticalAlign="middle">
-        <Grid.Column style={{ maxWidth: 450 }}>
-          <Header as="h2" color="violet" textAlign="center">
-            <Image src={logo} /> Log-in to your account
-          </Header>
-          <Form size="large">
-            <Segment stacked>
-              <Form.Input
-                fluid
-                icon="user"
-                iconPosition="left"
-                placeholder="Full name"
-                onChange={(e, { value }) => setName(value)}
-              />
-              <Form.Input
-                fluid
-                icon="mail"
-                iconPosition="left"
-                placeholder="E-mail address"
-                onChange={(e, { value }) => setEmail(value)}
-              />
-              <Form.Input
-                fluid
-                icon="lock"
-                iconPosition="left"
-                placeholder="Password"
-                type="password"
-                onChange={(e, { value }) => setPassword(value)}
-              />
-              <div style={{ marginBottom: "14px", float: "left" }}>
-                <Checkbox
-                  label="I'm a Notary"
-                  checked={notary}
-                  onChange={() => {
-                    setNotary(!notary);
-                  }}
-                />
-              </div>
-
-              <Button color="violet" fluid size="large" onClick={registerUser}>
-                Register
-              </Button>
-            </Segment>
-          </Form>
-          <Message>
-            Login here: <Link to="/login"> Login</Link>
-          </Message>
-        </Grid.Column>
-      </Grid>
-      {/* From here */}
       <div className="form-container">
         <div className="form-content-left">
-          <div style={{ margin: "24px 40px 0px 65px" }}>
+          <div className="logo_inverted">
             <img src={logo} alt="" srcset="" />
           </div>
-          <form action="" className="form" style={{ marginTop: "18px" }}>
-            <h1>Get started with us today! Create your account by filling out the information below.</h1>
+          <form action="" className="form">
+            <h2>Create an Account</h2>
             <div className="form-inputs">
               <label className="form-label">Username</label>
               <input
@@ -107,8 +58,8 @@ function SignUpForm({ writeContracts, tx }) {
                 type="text"
                 name="username"
                 placeholder="Enter your username"
-                // value={values.username}
-                // onChange={handleChange}
+                value={name}
+                onChange={e => setName(e.target.value)}
               />
             </div>
             <div className="form-inputs">
@@ -118,8 +69,8 @@ function SignUpForm({ writeContracts, tx }) {
                 type="email"
                 name="email"
                 placeholder="Enter your email"
-                // value={values.email}
-                // onChange={handleChange}
+                value={email}
+                onChange={e => setEmail(e.target.value)}
               />
             </div>
             <div className="form-inputs">
@@ -129,25 +80,27 @@ function SignUpForm({ writeContracts, tx }) {
                 type="password"
                 name="password"
                 placeholder="Enter your password"
-                // value={values.password}
-                // onChange={handleChange}
+                value={password}
+                onChange={e => setPassword(e.target.value)}
               />
-              {/* {errors.password && <p>{errors.password}</p>} */}
             </div>
+
             <div className="form-inputs">
-              <label className="form-label">Confirm Password</label>
-              <input
-                className="form-input"
-                type="password"
-                name="password2"
-                placeholder="Confirm your password"
-                // value={values.password2}
-                // onChange={handleChange}
+              <Checkbox
+                style={{ color: "#718096" }}
+                className="checkbox"
+                label="I'm a Notary"
+                checked={notary}
+                onChange={() => {
+                  setNotary(!notary);
+                }}
               />
-              {/* {errors.password2 && <p>{errors.password2}</p>} */}
             </div>
+
             <button className="form-input-btn" type="submit">
-              Sign up
+              <Link to="/login" style={{ color: "#fff" }}>
+                SIGN UP
+              </Link>
             </button>
             <span className="form-input-login">
               Already have an account? Login <Link to="/login">here</Link>
@@ -155,7 +108,7 @@ function SignUpForm({ writeContracts, tx }) {
           </form>
         </div>
         <div className="form-content-right">
-          <img src={Rocket} className="form-img" alt="left" srcset="" />
+          <img src={test} className="form-img" alt="left" srcset="" />
         </div>
       </div>
     </>

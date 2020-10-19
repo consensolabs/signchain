@@ -44,7 +44,8 @@
 .form-content-right {
   border-radius: 0 4px 4px 0;
   position: relative;
-  background: linear-gradient(90deg, rgb(39, 176, 255) 0%, rgb(0, 232, 236) 100%);
+  /* background: linear-gradient(90deg, rgb(39, 176, 255) 0%, rgb(0, 232, 236) 100%); */
+  background: var(--primary-color);
 }
 
 .form {
@@ -60,11 +61,11 @@
   align-items: center;
 }
 
-.form h1 {
-  font-size: 1rem;
+.form h2 {
+  font-size: 1.3rem;
   text-align: start;
   width: 80%;
-  margin-bottom: 1rem;
+  margin-bottom: 1.8rem;
   color: var(--font-body);
 }
 
@@ -81,7 +82,7 @@
 
 .form-label {
   display: inline-block;
-  font-size: 0.8rem;
+  font-size: 1rem;
   margin-bottom: 6px;
   color: var(--font-body);
   float: left;
@@ -100,12 +101,12 @@
 
 .form-input::placeholder {
   color: var(--font-body);
-  font-size: 12px;
+  font-size: 0.8rem;
 }
 
 .form-input-btn {
   width: 80%;
-  height: 50px;
+  height: 40px;
   margin-top: 10px;
   border-radius: 2px;
   background: var(--primary-color);
@@ -117,12 +118,12 @@
 
 .form-input-btn:hover {
   cursor: pointer;
-  background: linear-gradient(90deg, rgb(39, 143, 255) 0%, rgb(12, 99, 250) 100%);
+
   transition: all 0.4s ease-out;
 }
 
 .form-input-login {
-  font-size: 0.8rem;
+  font-size: 1rem;
   margin-top: 10px;
   color: #fff;
   width: 80%;
@@ -136,9 +137,15 @@
   font-weight: 600;
 }
 
-/* .logo {
+.logo_inverted {
   display: flex;
   float: left !important;
 
   margin: 24px 40px 60px 65px;
-} */
+}
+
+.checkbox {
+  float: left;
+  color: var(--font-body);
+  font-size: 1.2rem;
+}
