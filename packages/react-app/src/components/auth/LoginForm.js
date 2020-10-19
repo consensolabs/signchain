@@ -70,7 +70,7 @@ function LoginForm(props) {
               />
             </div>
 
-            <button className="form-input-btn" type="submit" onClick={loginUser}>
+            <button className="form-input-btn" onClick={loginUser}>
               Login
             </button>
             <span className="form-input-login">

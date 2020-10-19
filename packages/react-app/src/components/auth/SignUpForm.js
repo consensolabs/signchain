@@ -49,7 +49,7 @@ function SignUpForm({ writeContracts, tx }) {
           <div className="logo_inverted">
             <img src={logo} alt="" srcset="" />
           </div>
-          <form action="" className="form">
+          <form className="form">
             <h2>Create an Account</h2>
             <div className="form-inputs">
               <label className="form-label">Username</label>
@@ -97,10 +97,8 @@ function SignUpForm({ writeContracts, tx }) {
               />
             </div>
 
-            <button className="form-input-btn" type="submit">
-              <Link to="/login" style={{ color: "#fff" }}>
-                SIGN UP
-              </Link>
+            <button className="form-input-btn" onClick={registerUser}>
+              Sign Up
             </button>
             <span className="form-input-login">
               Already have an account? Login <Link to="/login">here</Link>
