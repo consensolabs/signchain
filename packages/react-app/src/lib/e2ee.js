@@ -213,7 +213,7 @@ export const getAllFile = async function(tx, writeContracts, address){
     for (let i=0;i<documents.length;i++){
         const hash = documents[i];
         const signDetails = await tx(writeContracts.Signchain.getSignedDocuments(hash))
-        //console.log("signDetails:", signDetails)
+        const notaryInfo = await getNotaryInfo(hash, tx, writeContracts)
         let signStatus = true
         let partySigned = false
         if (signDetails.signers.length !== signDetails.signatures.length){
@@ -232,7 +232,10 @@ export const getAllFile = async function(tx, writeContracts, address){
         let value = {
             hash: hash,
             signStatus: signStatus,
-            partySigned: partySigned
+            signers: signDetails.signers,
+            partySigned: partySigned,
+            notary: notaryInfo.notaryAddress,
+            notarySigned: notaryInfo.notarized
         }
         result.push(value)
     }
@@ -392,4 +395,27 @@ export const attachSignature = async function(fileHash, tx, writeContracts , sig
     ))
     console.log("signDetails:",signDetails)
     return true
+}
+
+export const notarizeDoc = async function(fileHash, tx, writeContracts , signer){
+
+    const signature = await signDocument(fileHash, tx, writeContracts , signer)
+    const signDetails = await tx(writeContracts.Signchain.notarizeDocument(
+        fileHash,
+        signature[0],
+        signature[1]
+    ))
+    console.log("signDetails:",signDetails)
+    return true
+}
+
+
+export const getNotaryInfo = async function(fileHash, tx, writeContracts) {
+   
+    const notaryDetails = await tx(writeContracts.Signchain.notarizedDocs(
+        fileHash))
+    
+    return notaryDetails
+
+
 }

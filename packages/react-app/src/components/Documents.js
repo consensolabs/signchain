@@ -3,16 +3,28 @@ import React, {useEffect, useState} from 'react'
 import {Button, Icon, Loader, Table} from 'semantic-ui-react'
 const index = require('../lib/e2ee.js')
 
+const userType = {party: 0, notary: 1}
+
 export default function Documents(props) {
 
     const password = localStorage.getItem('password')
+
+    const [caller, setCaller] = useState({})
     const [signer, setSigner] = useState({})
     const [docs, setDocs] = useState([])
     const [loading, setLoading] = useState(false)
 
+    console.log(docs)
+
     useEffect(() => {
         if (props.writeContracts) {
             getAllDoc()
+            setSigner(props.userProvider.getSigner())
+            index.getAllUsers(props.address, props.tx, props.writeContracts).then(result => {
+                console.log("Registered users:", result)
+                setCaller(result.caller)
+                
+            })
         }
 
     }, [props.writeContracts])
@@ -38,6 +50,13 @@ export default function Documents(props) {
         console.log("resultsss:",result)
     }
 
+    const notarizeDocument = async (docHash)=>{
+
+        const result = await index.notarizeDoc(docHash, props.tx, props.writeContracts , props.userProvider.getSigner())
+    }
+
+    
+
     return (
         <div>
         <Table singleLine striped >
@@ -50,8 +69,7 @@ export default function Documents(props) {
             <Table.Row>
             <Table.HeaderCell>Name</Table.HeaderCell>
             <Table.HeaderCell>Registration Date</Table.HeaderCell>
-            <Table.HeaderCell>Notarised</Table.HeaderCell>
-            <Table.HeaderCell>Action</Table.HeaderCell>
+            <Table.HeaderCell>Status</Table.HeaderCell>
             </Table.Row>
         </Table.Header>
 
@@ -66,16 +84,26 @@ export default function Documents(props) {
                                     </Table.Cell>
                                     <Table.Cell>10 hours ago</Table.Cell>
 
-                                    <Table.Cell> Status: { value.signStatus.toString() }</Table.Cell>
-                                    <Table.Cell>
-                                        Party Signed: { value.partySigned.toString() }
-                                    </Table.Cell>
+                                    <Table.Cell>  { value.signStatus ? <div><Icon name='circle' color='green' />Signed</div> : <div><Icon name='circle' color='red'/> Pending</div>}</Table.Cell>
+            
                                     {/*
                                         Handel this button based on value.partySigned .
                                         If partySigned is false then only display button else hide it
                                     */}
                                     <Table.Cell>
-                                        <Button onClick={()=>signDocument(value.hash)}>Sign Doc</Button>
+                                        {
+                                        value.notary === caller.address && !value.notarySigned?
+                                        <Button  basic
+                                        color='blue' icon labelPosition='left' onClick={()=>notarizeDocument(value.hash)}>
+                                            <Icon name='signup' />
+                                            Notarize</Button>
+                                        :
+                                        !value.partySigned ?<Button basic
+                                        color='blue' icon labelPosition='left' onClick={()=>signDocument(value.hash)}>
+                                            <Icon name='signup' />
+                                            Sign Document</Button> :
+                                        null
+                                        }
                                     </Table.Cell>
                                     <Table.Cell collapsing textAlign='right'>
                                         <Button icon='download' onClick={()=>downloadFile(value.hash)}/>
