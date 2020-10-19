@@ -13,8 +13,8 @@ AWS.config.update({
 })
 let s3 = new AWS.S3();
 
-const fleekApiKey = "****"
-const fleekApiSecret = "****"
+const fleekApiKey = "7niUfvisrFTfxJD8nyEBFg=="
+const fleekApiSecret = "UVlyrvRV/SWMLlvCBah18Eg9A4b4Ujqq0sFxbi35b+E="
 
 export const registerUser = async function(name, email, privateKey, userType, tx, writeContracts){
     try {
@@ -194,7 +194,8 @@ export const uploadFile = async function(party, file, password, setSubmitting, t
                     userAddress,
                     userAddress,
                     signature[0],
-                    signature[1]
+                    signature[1],
+                    '0x0000000000000000000000000000000000000000'
                 )).then((receipt) => {
                     setSubmitting(false)
                 })
@@ -206,6 +207,37 @@ export const uploadFile = async function(party, file, password, setSubmitting, t
 }
 
 
+export const getAllFile = async function(tx, writeContracts, address){
+    const documents = await tx(writeContracts.Signchain.getAllDocument())
+    let result = []
+    for (let i=0;i<documents.length;i++){
+        const hash = documents[i];
+        const signDetails = await tx(writeContracts.Signchain.getSignedDocuments(hash))
+        const notaryInfo = await getNotaryInfo(hash, tx, writeContracts)
+        let signStatus = true
+        let partySigned = false
+        if (signDetails.signers.length !== signDetails.signatures.length){
+            const array = signDetails.signatures.filter((item) => item[0]===address.toString())
+            if (array.length===1){
+                partySigned = true
+            }
+            signStatus = false;
+        }else{
+            signStatus = true
+            partySigned = true
+        }
+        let value = {
+            hash: hash,
+            signStatus: signStatus,
+            signers: signDetails.signers,
+            partySigned: partySigned,
+            notary: notaryInfo.notaryAddress,
+            notarySigned: notaryInfo.notarized
+        }
+        result.push(value)
+    }
+    return result
+}
 
 export const registerDoc = async function(party, fileHash, fileKey, password, setSubmitting, tx, writeContracts, signer, notary){
 
@@ -286,16 +318,12 @@ export const uploadDoc = async function(file, password, setSubmitting,
 }
 
 
-export const getAllFile = async function(tx, writeContracts){
-    return await tx(writeContracts.Signchain.getAllDocIndex())
-}
+export const downloadFile = async function (docHash,password, tx, writeContracts){
 
-export const downloadFile = async function (docIndex,password, tx, writeContracts){
-
-    let cipherKey = await tx(writeContracts.Signchain.getCipherKey(docIndex))
+    let cipherKey = await tx(writeContracts.Signchain.getCipherKey(docHash))
     console.log(cipherKey)
     cipherKey = JSON.parse(cipherKey)
-    const document = await tx(writeContracts.Signchain.getDocument(docIndex))
+    const document = await tx(writeContracts.Signchain.getDocument(docHash))
     let encryptedKey = {
         iv: Buffer.from(cipherKey.iv,"hex"),
         ephemPublicKey: Buffer.from(cipherKey.ephemPublicKey,"hex"),
@@ -331,7 +359,6 @@ export const downloadFile = async function (docIndex,password, tx, writeContract
             })
         }
     })
-
 }
 
 const signDocument = async function (fileHash, tx, writeContracts , signer){
@@ -351,5 +378,40 @@ const signDocument = async function (fileHash, tx, writeContracts , signer){
 
   const paramsHash = ethers.utils.keccak256(ethers.utils.defaultAbiCoder.encode(...params));
   return [replayNonce, await signer.signMessage(ethers.utils.arrayify(paramsHash))]
+
+}
+
+export const attachSignature = async function(fileHash, tx, writeContracts , signer){
+
+    const signature = await signDocument(fileHash, tx, writeContracts , signer)
+    const signDetails = await tx(writeContracts.Signchain.signDocument(
+        fileHash,
+        signature[0],
+        signature[1]
+    ))
+    console.log("signDetails:",signDetails)
+    return true
+}
+
+export const notarizeDoc = async function(fileHash, tx, writeContracts , signer){
+
+    const signature = await signDocument(fileHash, tx, writeContracts , signer)
+    const signDetails = await tx(writeContracts.Signchain.notarizeDocument(
+        fileHash,
+        signature[0],
+        signature[1]
+    ))
+    console.log("signDetails:",signDetails)
+    return true
+}
+
+
+export const getNotaryInfo = async function(fileHash, tx, writeContracts) {
+   
+    const notaryDetails = await tx(writeContracts.Signchain.notarizedDocs(
+        fileHash))
+    
+    return notaryDetails
+
 
 }

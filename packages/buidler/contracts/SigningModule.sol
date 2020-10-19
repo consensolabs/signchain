@@ -39,6 +39,7 @@ contract SigningModule {
         require(signedDocuments[docHash].timestamp > 0, "Document doesn't exist");
         require(nonce == replayNonce[msg.sender]);
         require(signerExists(docHash) == true, "Not in the signers list");
+        require(notSigned(docHash) == true, "Signer already signed");
         _;
     }
 
@@ -49,6 +50,15 @@ contract SigningModule {
                 return true;
         }
         return false;
+    }
+
+    function notSigned(bytes32 docHash) private view returns (bool) {
+
+        for(uint signCount=0; signCount < signedDocuments[docHash].signatures.length; signCount++) {
+            if(signedDocuments[docHash].signatures[signCount].signer == msg.sender)
+                return false;
+        }
+        return true;
     }
 
     /**
@@ -97,6 +107,10 @@ contract SigningModule {
     function getSignatures(bytes32 docHash) public view returns(Signature[] memory) {
         return signedDocuments[docHash].signatures;
 
+    }
+
+    function getSignedDocuments(bytes32 docHash) public view returns(SignedDocument memory doc){
+        return signedDocuments[docHash];
     }
 
     /**

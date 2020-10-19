@@ -27,39 +27,36 @@ describe("Signchain", function () {
       const signers = [account1._address, account2._address]
 
       expect(await contractInstance.connect(account1).addDocument(docHash, signers))
-  })
+    })
 
-  it('Should sign the document', async () => {
+    it('Should sign the document', async () => {
 
-    const docHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes("docHash"))
-    // Don't covers to bytes if it is a hexa string
-    const signers = [account1._address, account2._address]
+      const docHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes("docHash"))
+      // Don't covers to bytes if it is a hexa string
+      const signers = [account1._address, account2._address]
 
-    const replayNonce = await contractInstance.connect(account1).replayNonce(account1._address)
-    const params = [
-      ["bytes32", "uint"],
-      [
-          docHash,
-          replayNonce
-      ]
-  ];
+      const replayNonce = await contractInstance.connect(account1).replayNonce(account1._address)
+      const params = [
+        ["bytes32", "uint"],
+        [
+            docHash,
+            replayNonce
+        ]
+      ];
 
-  let paramsHash = ethers.utils.keccak256(ethers.utils.defaultAbiCoder.encode(...params));
-  let signature  = await account1.signMessage(ethers.utils.arrayify(paramsHash))
-  expect(await contractInstance.connect(account1).signDocument(docHash, replayNonce, signature))
-  let isSigned = await contractInstance.connect(account1).isDocumentSigned(docHash) 
-  expect(isSigned).is.false
+      let paramsHash = ethers.utils.keccak256(ethers.utils.defaultAbiCoder.encode(...params));
+      let signature  = await account1.signMessage(ethers.utils.arrayify(paramsHash))
+      expect(await contractInstance.connect(account1).signDocument(docHash, replayNonce, signature))
+      let isSigned = await contractInstance.connect(account1).isDocumentSigned(docHash)
+      expect(isSigned).is.false
 
-  signature  = await account2.signMessage(ethers.utils.arrayify(paramsHash))
-  expect(await contractInstance.connect(account2).signDocument(docHash, replayNonce, signature))
+      signature  = await account2.signMessage(ethers.utils.arrayify(paramsHash))
+      expect(await contractInstance.connect(account2).signDocument(docHash, replayNonce, signature))
 
-  const signatures = await contractInstance.connect(account1).getSignatures(docHash) 
-  expect(signatures.length).is.equal(2)
-  isSigned = await contractInstance.connect(account1).isDocumentSigned(docHash) 
-  expect(isSigned).is.true
-  
-
-})
-
+      const signatures = await contractInstance.connect(account1).getSignatures(docHash)
+      expect(signatures.length).is.equal(2)
+      isSigned = await contractInstance.connect(account1).isDocumentSigned(docHash)
+      expect(isSigned).is.true
+    })
   });
 });

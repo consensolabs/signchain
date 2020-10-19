@@ -62,12 +62,12 @@ it('Should share document between PartyA and PartyB', async() => {
 });
 
 it('Should get all document for PartyA', async() => {
-  const document = await contractInstance.connect(account1).getAllDocIndex()
+  const document = await contractInstance.connect(account1).getAllDocument()
   expect(document.length).to.equal(1)
 });
 
 it('Should get specific document', async() => {
-  const document = await contractInstance.getDocument(0)
+  const document = await contractInstance.getDocument(ethers.utils.keccak256(ethers.utils.toUtf8Bytes("doc Hash")))
   expect(document.users.length).to.equal(2)
   expect(document.key.length).to.equal(2)
   expect(document.documentLocation).to.equal('doc location')
@@ -75,7 +75,7 @@ it('Should get specific document', async() => {
 });
 
 it('Should get AesEncKey for PartyA for document 0', async () => {
-  const cipherKey = await contractInstance.connect(account1).getCipherKey(0)
+  const cipherKey = await contractInstance.connect(account1).getCipherKey(ethers.utils.keccak256(ethers.utils.toUtf8Bytes("doc Hash")))
   expect(cipherKey).to.equal('AesEncKeyPartyA')
 });
 

@@ -48,9 +48,6 @@ const stepper=(props)=> {
 
   let fileInputRef = React.createRef();
 
-  console.log(notaries)
-  console.log(fileInfo)
-
   useEffect(() => {
         
     if (props.writeContracts) {
