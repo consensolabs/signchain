@@ -11,8 +11,6 @@ const {  Content } = Layout;
 
 export default function layout(props) {
 
-    console.log(props)
-
     let history = useHistory()
 
     return (

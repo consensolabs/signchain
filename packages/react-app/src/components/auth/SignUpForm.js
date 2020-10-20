@@ -6,8 +6,10 @@ import logo from '../../static/logo.png';
 import Cookies from 'universal-cookie';
 const cookies = new Cookies();
 const index = require('../../lib/e2ee.js')
+import {profileSchema} from "../../ceramic/schemas"
+import { createDefinition } from '@ceramicstudio/idx-tools'
 
-function SignUpForm({writeContracts, tx}) {
+function SignUpForm({writeContracts, tx, ceramic, idx, schemas}) {
 
     let history = useHistory();
 
@@ -25,6 +27,17 @@ function SignUpForm({writeContracts, tx}) {
         const walletStatus = await index.createWallet(password)
         if (walletStatus){
             const accounts = await index.getAllAccounts(password)
+            const profileId = await createDefinition(ceramic, {
+                name:"Signchain Profile",
+                schema: profileSchema
+            })
+
+            await idx.set(profileId, {
+                name:name,
+                email:email,
+                notary:notary
+            })
+            localStorage.setItem("profileSchema", profileId);
             const registrationStatus = await index.registerUser(name, email, accounts[0], notary ? userType.notary : userType.party, tx, writeContracts)
             if (registrationStatus) {
                 cookies.set('userAddress', registrationStatus);
