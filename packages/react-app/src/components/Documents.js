@@ -7,36 +7,45 @@ const index = require("../lib/e2ee");
 const userType = { party: 0, notary: 1 };
 
 export default function Documents(props) {
-  const password = localStorage.getItem("password");
-  const [open, setOpen] = useState(false);
-  const [caller, setCaller] = useState({});
-  const [signer, setSigner] = useState({});
-  const [docs, setDocs] = useState([]);
-  const [loading, setLoading] = useState(false);
 
-  // modal
 
-  console.log(docs);
+    const password = localStorage.getItem('password')
 
-  useEffect(() => {
-    if (props.writeContracts) {
-      getAllDoc();
-      setSigner(props.userProvider.getSigner());
-      index.getAllUsers(props.address, props.tx, props.writeContracts).then(result => {
-        console.log("Registered users:", result);
-        setCaller(result.caller);
-      });
+    const [open, setOpen] = useState(false);
+    const [caller, setCaller] = useState({})
+    const [signer, setSigner] = useState({})
+    const [docs, setDocs] = useState([])
+    const [loading, setLoading] = useState(false)
+
+    console.log(docs)
+
+    useEffect(() => {
+        if (props.writeContracts) {
+            props.writeContracts.Signchain.on("DocumentSigned", (author, oldValue, newValue, event) => {
+                getAllDoc()
+              });
+              props.writeContracts.Signchain.on("DocumentNatarized", (author, oldValue, newValue, event) => {
+                getAllDoc()
+              });
+            getAllDoc()
+            setSigner(props.userProvider.getSigner())
+            index.getAllUsers(props.address, props.tx, props.writeContracts).then(result => {
+                console.log("Registered users:", result)
+                setCaller(result.caller)
+                
+            })
+        }
+
+    }, [props.writeContracts])
+
+    const getAllDoc = async () =>{
+        setLoading(true)
+        const result = await index.getAllFile(props.tx, props.writeContracts, props.address)
+        if(result.length>0) {
+            setDocs(result)
+        }
+        setLoading(false)
     }
-  }, [props.writeContracts]);
-
-  const getAllDoc = async () => {
-    setLoading(true);
-    const result = await index.getAllFile(props.tx, props.writeContracts, props.address);
-    if (result.length > 0) {
-      setDocs(result);
-    }
-    setLoading(false);
-  };
 
   const downloadFile = docHash => {
     console.log("Downloading:", docHash);
@@ -69,34 +78,21 @@ export default function Documents(props) {
           </Table.Row>
         </Table.Header>
 
-        <Table.Body>
-          {!loading ? (
-            docs.map(value => {
-              return (
-                <Table.Row>
-                  <Table.Cell collapsing>
-                    <Icon name="file outline" /> Document
-                  </Table.Cell>
-                  <Table.Cell>10 hours ago</Table.Cell>
 
-                  <Table.Cell>
-                    {" "}
-                    {value.signStatus ? (
-                      <div>
-                        <Icon name="circle" color="green" />
-                        Signed
-                      </div>
-                    ) : (
-                      <div>
-                        <Icon name="circle" color="red" /> Pending
-                      </div>
-                    )}
-                  </Table.Cell>
+            <Table.Body>
+                {
+                    !loading ?
+                        docs.map((value) => {
+                            return (
+                                <Table.Row>
+                                    <a><Table.Cell collapsing  onClick={()=>setOpen(true)}>
+                                        <Icon name='file outline'/> {value.title}
+                                    </Table.Cell>
+                                    </a>
+                                    <Table.Cell>{new Date(value.timestamp).toDateString()}</Table.Cell>
 
-                  {/*
-                                        Handel this button based on value.partySigned .
-                                        If partySigned is false then only display button else hide it
-                                    */}
+                                    <Table.Cell>  { value.signStatus ? <div><Icon name='circle' color='green' />Signed</div> : <div><Icon name='circle' color='red'/> Pending</div>}</Table.Cell>
+  
                   <Table.Cell>
                     {value.notary === caller.address && !value.notarySigned ? (
                       <Button basic color="blue" icon labelPosition="left" onClick={() => notarizeDocument(value.hash)}>
@@ -116,7 +112,7 @@ export default function Documents(props) {
                 </Table.Row>
               );
             })
-          ) : (
+           : (
             <Loader active size="medium">
               Loading
             </Loader>
@@ -181,29 +177,6 @@ export default function Documents(props) {
         </Modal.Actions>
       </Modal>
 
-      <Table singleLine striped>
-        <Table.Header>
-          <Table.Row>
-            <Table.HeaderCell>Name</Table.HeaderCell>
-            <Table.HeaderCell>Status</Table.HeaderCell>
-            <Table.HeaderCell>Notes</Table.HeaderCell>
-            <Table.HeaderCell>Actions</Table.HeaderCell>
-          </Table.Row>
-        </Table.Header>
-
-        <Table.Body>
-          <Table.Row onClick={() => setOpen(true)}>
-            <Table.Cell>John</Table.Cell>
-            <Table.Cell>Approved</Table.Cell>
-            <Table.Cell>None</Table.Cell>
-            <Table.Cell>
-              <Button className="button__primary" onClick={() => setOpen(true)}>
-                More Info
-              </Button>
-            </Table.Cell>
-          </Table.Row>
-        </Table.Body>
-      </Table>
     </div>
   );
 }

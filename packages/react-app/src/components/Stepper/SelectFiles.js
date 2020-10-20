@@ -3,7 +3,7 @@ import React, {useState} from 'react';
 import 'antd/dist/antd.css';
 import upload from '../../images/upload.png'
 import { Upload, message } from 'antd';
-import { Dropdown } from 'semantic-ui-react'
+import { Dropdown, Input } from 'semantic-ui-react'
 
 const index = require('../../lib/e2ee.js')
 
@@ -12,9 +12,9 @@ const { Dragger } = Upload;
 const fileStorage =["AWS","Fleek"]
 
 
-const SelectFiles=({setFileInfo, setSubmitting})=>{
+const SelectFiles=({setFileInfo, setSubmitting, setTitle, submitting})=>{
 
-const [file, selectFile] = useState({})
+const [selected, setSelected] = useState(false)
     const [storageType, setStorage] = useState("AWS")
     console.log(storageType)
 
@@ -36,6 +36,7 @@ const props = {
 
 const uploadFile = async (file)=>{
   let partiesInvolved = []
+  setSelected(true)
   setSubmitting(true)
   const receipt  = await index.uploadDoc(file, '123', setSubmitting, storageType, setFileInfo)
   console.log("File uploaded!", receipt)
@@ -77,6 +78,10 @@ const uploadFile = async (file)=>{
     <p className="ant-upload-text">Click or drag file to this area to upload</p>
    
   </Dragger>  
+  {selected && !submitting ?
+  <Input placeholder='Enter document title' onChange={(event, data)=>{setTitle(data.value)}}/>:
+  null
+  }
      </div>
           
         
