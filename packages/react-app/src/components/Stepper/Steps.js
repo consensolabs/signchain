@@ -16,7 +16,7 @@ const { Step } = Steps;
 const steps = [
   {
     title: 'Select Document',
-  content: (args) => {return <SelectFiles setFileInfo = {args.setFileInfo} setSubmitting={args.setSubmitting}/>} ,
+  content: (args) => {return <SelectFiles setFileInfo = {args.setFileInfo} setSubmitting={args.setSubmitting} setTitle={args.setTitle} submitting={args.submitting}/>} ,
   },
   {
     title: 'Select Parties',
@@ -24,7 +24,7 @@ const steps = [
   },
   {
     title: 'Preview and Sign',
-    content: (args) => {return <Preview parties = {args.parties} fileInfo = {args.fileInfo} />},
+    content: (args) => {return <Preview parties = {args.parties} fileInfo = {args.fileInfo} title = {args.title}/>},
   },
 ];
 
@@ -45,12 +45,17 @@ const stepper=(props)=> {
   const [submitting, setSubmitting] = useState(false)
   const [storageType, setStorage] = useState("AWS")
   const [fileInfo, setFileInfo] = useState({})
+  const [title, setTitle] = useState(null)
 
   let fileInputRef = React.createRef();
+
 
   useEffect(() => {
         
     if (props.writeContracts) {
+      props.writeContracts.Signchain.on("DocumentSigned", (author, oldValue, newValue, event) => {
+        console.log(event);
+      });
         setSigner(props.userProvider.getSigner())
         index.getAllUsers(props.address, props.tx, props.writeContracts).then(result => {
             console.log("Registered users:", result)
@@ -84,7 +89,7 @@ const [current, setCurrent] = useState(0)
     <Grid columns='two' >
     <Grid.Row>
       <Grid.Column width={12}>
-        <div className="steps-content">{steps[current].content({users, notaries, setParties, setFileInfo, parties, fileInfo, setSubmitting, setDocNotary})}</div>
+        <div className="steps-content">{steps[current].content({users, notaries, submitting, setTitle, setParties, setFileInfo, parties, fileInfo, title, setSubmitting, setDocNotary})}</div>
         
         <div className="steps-action" style={{float:'right'}}>
        
@@ -104,7 +109,7 @@ const [current, setCurrent] = useState(0)
             <Button type="primary" loading={submitting} onClick={() => {
               const allParties = parties;
               allParties.push(caller);
-              index.registerDoc(allParties, fileInfo.fileHash, fileInfo.fileKey, password, setSubmitting, props.tx, props.writeContracts, signer, docNotary)}}  className="button">
+              index.registerDoc(allParties, fileInfo.fileHash, title, fileInfo.fileKey, password, setSubmitting, props.tx, props.writeContracts, signer, docNotary)}}  className="button">
               Sign & Share
             </Button>
           )}

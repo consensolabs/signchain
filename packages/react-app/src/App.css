@@ -89,3 +89,12 @@
 .ant-steps-item-icon {
   color: #48bb78 !important;
 }
+
+.main__container {
+  margin: 16px;
+}
+
+.button__primary {
+  background: #48bb78 !important;
+  color: #fff !important;
+}

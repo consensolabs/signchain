@@ -228,6 +228,8 @@ export const getAllFile = async function(tx, writeContracts, address){
         }
         let value = {
             hash: hash,
+            title: signDetails.title,
+            timestamp: parseInt(signDetails.timestamp) * 1000,
             signStatus: signStatus,
             signers: signDetails.signers,
             partySigned: partySigned,
@@ -239,7 +241,7 @@ export const getAllFile = async function(tx, writeContracts, address){
     return result
 }
 
-export const registerDoc = async function(party, fileHash, fileKey, password, setSubmitting, tx, writeContracts, signer, notary){
+export const registerDoc = async function(party, fileHash, title, fileKey, password, setSubmitting, tx, writeContracts, signer, notary){
 
     console.log(notary)
 
@@ -267,6 +269,7 @@ export const registerDoc = async function(party, fileHash, fileKey, password, se
         
     tx(writeContracts.Signchain.signAndShareDocument(
         fileHash,
+        title,
         fileKey,
         encryptedKeys,
         userAddress,

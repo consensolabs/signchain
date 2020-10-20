@@ -14,6 +14,12 @@ contract Signchain is DocumentRegistry, SigningModule {
         bool notarized;
     }
 
+    event DocumentNatarized (
+        bytes32 docHash,
+        uint timestamp,
+        address notary 
+    );
+
     // Fixed Notary fee    
     uint notaryFee = 0.1 ether;
 
@@ -26,7 +32,7 @@ contract Signchain is DocumentRegistry, SigningModule {
         _;
     }
 
-    function signAndShareDocument(bytes32 documentHash, string memory documentLocation,
+    function signAndShareDocument(bytes32 documentHash, string memory title, string memory documentLocation,
                                 string[] memory key, address[] memory users, address[] memory signers,
                                 uint nonce, bytes memory signature, address notary) public payable {
 
@@ -41,7 +47,7 @@ contract Signchain is DocumentRegistry, SigningModule {
             notarizedDocs[documentHash] = Notarize(notary, msg.value, false);
         }
     
-        addDocument(documentHash, signers);
+        addDocument(documentHash, title, signers);
 
         signDocument(documentHash, nonce, signature);
   
@@ -53,6 +59,8 @@ contract Signchain is DocumentRegistry, SigningModule {
         signDocument(documentHash, nonce, signature);    
         notarizedDocs[documentHash].notarized = true;
         payable(address(msg.sender)).transfer(notarizedDocs[documentHash].notaryFee);
+
+        emit DocumentNatarized(documentHash, now, msg.sender);
 
     }
 

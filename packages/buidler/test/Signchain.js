@@ -13,7 +13,7 @@ describe("Signchain", function () {
   describe("SignchainFlow", function () {
 
     
-    it("Should deploy YourContract", async function () {
+    it("Should deploy Signchain", async function () {
 
       [account1, account2, notary] = await ethers.getSigners();
   
@@ -40,6 +40,7 @@ describe("Signchain", function () {
 
       const document = await contractInstance.connect(account1).signAndShareDocument(
         docHash,
+        "test Doc",
         "doc location",
         ["AesEncKeyPartyA","AesEncKeyPartyB"],
         [account1._address,account2._address],
@@ -82,6 +83,7 @@ describe("Signchain", function () {
 
     const document = await contractInstance.connect(account1).signAndShareDocument(
       docHash,
+      "test Doc",
       "doc location",
       ["AesEncKeyPartyA","AesEncKeyPartyB"],
       [account1._address,account2._address],

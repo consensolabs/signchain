@@ -14,6 +14,7 @@ contract SigningModule {
     //Struct to timestamp the document
     // @notice: Storing signers in a separate array instead of mapping signer to signature to reduce complexity
     struct SignedDocument {
+        string title;
         uint timestamp;
         address[] signers;
         Signature[] signatures;
@@ -24,8 +25,15 @@ contract SigningModule {
         address signer;
         uint nonce;
         bytes signatureDigest;
+        uint timestamp;
 
     }
+
+    event DocumentSigned (
+        bytes32 docHash,
+        uint timestamp,
+        address signer
+    );
 
     //Mapping between original document hash before annotation and Document contents
     mapping(bytes32 => SignedDocument) public signedDocuments;
@@ -66,10 +74,11 @@ contract SigningModule {
      * @param docHash: keccak256 hash value of the original document
      * @param signers: Array of signers of the document
      */
-    function addDocument(bytes32 docHash, address[] memory signers) public{
+    function addDocument(bytes32 docHash, string memory title, address[] memory signers) public{
 
         // NOTE: Only solution to assign empty Signature array without hitting the storage pointer issue
         signedDocuments[docHash].timestamp = now;
+        signedDocuments[docHash].title = title;
         signedDocuments[docHash].signers = signers;
 
     }
@@ -94,11 +103,13 @@ contract SigningModule {
 
         bytes32 metaHash = keccak256(abi.encode(docHash, nonce));
         require(getSigner(metaHash, _signature)==msg.sender, "Signature was not signed by the initiator");
-        Signature memory signature = Signature(msg.sender, nonce, _signature);
+        Signature memory signature = Signature(msg.sender, nonce, _signature, now);
         signedDocuments[docHash].signatures.push(signature);
 
         //increase the nonce to prevent replay attacks
         replayNonce[msg.sender]++;
+
+        emit DocumentSigned(docHash, now, msg.sender);
     }
 
     /**

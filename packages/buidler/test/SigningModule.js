@@ -8,14 +8,14 @@ describe("Signchain", function () {
   let contractInstance, account1, account2;
 
 
-  describe("DocumentRegistry", function () {
+  describe("SigningModule", function () {
 
     
-    it("Should deploy YourContract", async function () {
+    it("Should deploy SigningModule", async function () {
 
       [account1, account2] = await ethers.getSigners();
   
-      const DocumentRegistry = await ethers.getContractFactory("Signchain");
+      const DocumentRegistry = await ethers.getContractFactory("SigningModule");
 
       contractInstance = await DocumentRegistry.deploy();
     });
@@ -26,7 +26,7 @@ describe("Signchain", function () {
       // Don't covers to bytes if it is a hexa string
       const signers = [account1._address, account2._address]
 
-      expect(await contractInstance.connect(account1).addDocument(docHash, signers))
+      expect(await contractInstance.connect(account1).addDocument(docHash, "test Doc", signers))
     })
 
     it('Should sign the document', async () => {
