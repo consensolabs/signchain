@@ -22,40 +22,12 @@ function LoginForm(props) {
 
   return (
     <>
-      <Grid textAlign="center" style={{ height: "100vh" }} verticalAlign="middle">
-        <Grid.Column style={{ maxWidth: 450 }}>
-          <Header as="h2" color="violet" textAlign="center">
-            <Image src={logo} /> Log-in to your account
-          </Header>
-          <Form size="large">
-            <Segment stacked>
-              <Form.Input
-                fluid
-                icon="lock"
-                iconPosition="left"
-                placeholder="Password"
-                type="password"
-                onChange={(e, { value }) => setPassword(value)}
-              />
-
-              <Button color="violet" fluid size="large" onClick={loginUser}>
-                Login
-              </Button>
-            </Segment>
-          </Form>
-          <Message>
-            Haven't registered ? <Link to="/signup"> Sign Up</Link>
-          </Message>
-        </Grid.Column>
-      </Grid>
-
-      {/* from here */}
       <div className="form-container">
         <div className="form-content-left">
           <div className="logo_inverted ">
             <img src={logo} alt="" srcset="" />
           </div>
-          <form action="" className="form">
+          <div className="form">
             <h2>Login to your Account</h2>
 
             <div className="form-inputs">
@@ -76,7 +48,7 @@ function LoginForm(props) {
             <span className="form-input-login">
               Haven't registered ? Sign Up <Link to="/signup">here</Link>
             </span>
-          </form>
+          </div>
         </div>
         <div className="form-content-right">
           <img src={test} className="form-img" alt="left" srcset="" />

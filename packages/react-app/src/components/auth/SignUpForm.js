@@ -1,7 +1,7 @@
 /* eslint-disable */
 import React, { useEffect, useState } from "react";
 import "./Form.css";
-import { Button, Checkbox, Form, Grid, Header, Image, Message, Segment } from "semantic-ui-react";
+import { Checkbox } from "semantic-ui-react";
 import { Link, useHistory } from "react-router-dom";
 import logo from "../../images/logoInverted.png";
 import Cookies from "universal-cookie";
@@ -49,7 +49,7 @@ function SignUpForm({ writeContracts, tx }) {
           <div className="logo_inverted">
             <img src={logo} alt="" srcset="" />
           </div>
-          <form className="form">
+          <div className="form">
             <h2>Create an Account</h2>
             <div className="form-inputs">
               <label className="form-label">Username</label>
@@ -103,7 +103,7 @@ function SignUpForm({ writeContracts, tx }) {
             <span className="form-input-login">
               Already have an account? Login <Link to="/login">here</Link>
             </span>
-          </form>
+          </div>
         </div>
         <div className="form-content-right">
           <img src={test} className="form-img" alt="left" srcset="" />
