@@ -124,7 +124,7 @@ export default function Documents(props) {
         </Table.Body>
       </Table>
 
-      {/* demo -replace onclick-modal with actual table data */}
+      {/* demo -replace - with actual table data */}
 
       <Modal onClose={() => setOpen(false)} onOpen={() => setOpen(true)} open={open}>
         <Modal.Header>Document Status</Modal.Header>

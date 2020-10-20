@@ -1,7 +1,7 @@
 /* eslint-disable */
 import React, { useEffect, useState } from "react";
 
-import { Header, Image, Grid, Card, Icon } from "semantic-ui-react";
+import { Header, Image, Grid, Card, Icon, Table } from "semantic-ui-react";
 import { Form, Input, Button, Checkbox } from "antd";
 const index = require("../lib/e2ee.js");
 
@@ -48,20 +48,50 @@ export default function Profile(props) {
             <Card.Group>
               <Card fluid>
                 <Card.Content>
-                  <Form layout="vertical">
-                    <Form.Item label="Username">
-                      <Input placeholder="John Doe" readOnly />
-                    </Form.Item>
-                    <Form.Item label="Email">
-                      <Input placeholder="john.doe@domain.com" readOnly />
-                    </Form.Item>
-                    <Form.Item label="Address">
-                      <Input placeholder="0x337bbbbbbbbbbbbb" readOnly />
-                    </Form.Item>
-                    <Form.Item label="User Type">
-                      <Input placeholder="Notary" readOnly />
-                    </Form.Item>
-                  </Form>
+                  <Table padded="very">
+                    <Table.Body>
+                      <Table.Row>
+                        <Table.Cell>
+                          <h3>User Name</h3>
+                        </Table.Cell>
+                        <Table.Cell>
+                          <h3>{user.name}</h3>
+                        </Table.Cell>
+                      </Table.Row>
+                      <Table.Row>
+                        <Table.Cell>
+                          <h3>Email</h3>
+                        </Table.Cell>
+                        <Table.Cell>
+                          <h3>name@domain.com</h3>
+                        </Table.Cell>
+                      </Table.Row>
+                      <Table.Row>
+                        <Table.Cell>
+                          <h3>User Adress</h3>
+                        </Table.Cell>
+                        <Table.Cell>
+                          <h3>0x337b2aF19e840E8761Ef7a90Ce05Fedf4E91E2B2</h3>
+                        </Table.Cell>
+                      </Table.Row>
+                      <Table.Row>
+                        <Table.Cell>
+                          <h3>User Type</h3>
+                        </Table.Cell>
+                        <Table.Cell>
+                          <h3>Notary</h3>
+                        </Table.Cell>
+                      </Table.Row>
+                      <Table.Row>
+                        <Table.Cell>
+                          <h3>Member Since</h3>
+                        </Table.Cell>
+                        <Table.Cell>
+                          <h3>October 2020</h3>
+                        </Table.Cell>
+                      </Table.Row>
+                    </Table.Body>
+                  </Table>
                 </Card.Content>
               </Card>
             </Card.Group>
