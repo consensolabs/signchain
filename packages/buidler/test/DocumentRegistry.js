@@ -13,11 +13,11 @@ describe("Signchain", function () {
   describe("DocumentRegistry", function () {
 
     
-    it("Should deploy YourContract", async function () {
+    it("Should deploy DocumentRegistry", async function () {
 
       [account1, account2] = await ethers.getSigners();
   
-      const DocumentRegistry = await ethers.getContractFactory("Signchain");
+      const DocumentRegistry = await ethers.getContractFactory("DocumentRegistry");
 
       contractInstance = await DocumentRegistry.deploy();
     });

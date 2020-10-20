@@ -18,6 +18,12 @@ export default function Documents(props) {
 
     useEffect(() => {
         if (props.writeContracts) {
+            props.writeContracts.Signchain.on("DocumentSigned", (author, oldValue, newValue, event) => {
+                getAllDoc()
+              });
+              props.writeContracts.Signchain.on("DocumentNatarized", (author, oldValue, newValue, event) => {
+                getAllDoc()
+              });
             getAllDoc()
             setSigner(props.userProvider.getSigner())
             index.getAllUsers(props.address, props.tx, props.writeContracts).then(result => {
@@ -80,9 +86,9 @@ export default function Documents(props) {
                             return (
                                 <Table.Row>
                                     <Table.Cell collapsing>
-                                        <Icon name='file outline'/> Document
+                                        <Icon name='file outline'/> {value.title}
                                     </Table.Cell>
-                                    <Table.Cell>10 hours ago</Table.Cell>
+                                    <Table.Cell>{new Date(value.timestamp).toDateString()}</Table.Cell>
 
                                     <Table.Cell>  { value.signStatus ? <div><Icon name='circle' color='green' />Signed</div> : <div><Icon name='circle' color='red'/> Pending</div>}</Table.Cell>
             
