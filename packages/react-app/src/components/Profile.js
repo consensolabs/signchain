@@ -9,19 +9,18 @@ export default function Profile({ceramic, idx}) {
     useEffect(() => {
        async function getUserData() {
            try{
-            console.log(idx)
-            const profileSchema = localStorage.getItem("profileSchema");
-            const data = await idx.get("ceramic://bagcqcera5h4ell4xe55tmuikuoj626zgf2sof4urgmnu2mok5flml34lclga", idx.id)
-            setUser(data);
-            console.log(data);
+            if(idx !== null) {
+                console.log(idx)
+                const profileSchema = localStorage.getItem("profileSchema");
+                const data = await idx.get(profileSchema, idx.id)
+                console.log(data);
+            }
            }catch(err){
                console.log(err);
            }
            
        }
-       if(idx){
         getUserData()
-       }
     }, [idx] )
 
     return (
