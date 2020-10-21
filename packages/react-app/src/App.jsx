@@ -19,6 +19,7 @@ import Documents from "./components/Documents";
 import Profile from "./components/Profile";
 import Layout from "./components/Layout";
 import Steps from './components/Stepper/Steps'
+import Verify from './components/Verify/Verify'
 import { INFURA_ID, ETHERSCAN_KEY } from "./constants";
 import Dashboard from "./components/Dashboard";
 
@@ -121,8 +122,9 @@ function App() {
               blockExplorer={blockExplorer}
               
               >
+
                     {/* <Steps/> */}
-                <Route exact path="/share" render={(props) =>
+                <Route exact path="/sign" render={(props) =>
                     <Steps
                         address={address}
                         tx={tx}
@@ -131,6 +133,19 @@ function App() {
                         userProvider={userProvider}
                         {...props}
                     />}/>
+               <Route exact path="/dashboard" render={(props) =>
+                    <Dashboard
+                       
+                    />}/>
+            <Route exact path="/verify" render={(props) =>
+            <Verify
+                address={address}
+                tx={tx}
+                writeContracts={writeContracts}
+                readContracts={readContracts}
+                userProvider={userProvider}
+                {...props}
+            />}/>
                    
                  <Route exact path="/documents" render={(props) =>
                     <Documents
@@ -147,10 +162,7 @@ function App() {
                         writeContracts={writeContracts}
                         {...props}
                     />}/>
-                <Route exact path="/dashboard" render={(props) =>
-                    <Dashboard
-                       
-                    />}/>
+            
               </Layout>
             </Switch>
           </div>

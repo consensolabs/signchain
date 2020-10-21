@@ -12,7 +12,7 @@ const Dashboard = () => (
       <Grid divided="vertically" className="spacing">
         <Grid.Row columns={5}>
           <Grid.Column>
-            <Link to="/share">
+            <Link to="/sign">
               <div className="card">
                 <div className="inner__container">
                   <div className="img">
@@ -24,7 +24,7 @@ const Dashboard = () => (
             </Link>
           </Grid.Column>
           <Grid.Column>
-            <Link to="/share">
+            <Link to="/sign">
               <div className="card">
                 <div className="inner__container">
                   <div className="img">
@@ -36,7 +36,7 @@ const Dashboard = () => (
             </Link>
           </Grid.Column>
           <Grid.Column>
-            <Link to="/share">
+            <Link to="/verify">
               <div className="card">
                 <div className="inner__container">
                   <div className="img">

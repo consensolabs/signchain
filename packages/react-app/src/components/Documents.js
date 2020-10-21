@@ -17,6 +17,7 @@ export default function Documents(props) {
   const [caller, setCaller] = useState({});
   const [signer, setSigner] = useState({});
   const [docs, setDocs] = useState([]);
+  const [docInfo, setDocInfo] = useState({});
   const [loading, setLoading] = useState(false);
 
   console.log("Docs", docs);
@@ -99,7 +100,7 @@ export default function Documents(props) {
               return (
                 <Table.Row>
                   <a>
-                    <Table.Cell collapsing onClick={() => setOpen(true)}>
+                    <Table.Cell collapsing onClick={() => {setOpen(true); setDocInfo(value)}}>
                       <Icon name="file outline" /> {value.title}
                     </Table.Cell>
                   </a>
@@ -154,7 +155,7 @@ export default function Documents(props) {
       {/* demo -replace - with actual table data */}
 
       <Modal onClose={() => setOpen(false)} onOpen={() => setOpen(true)} open={open}>
-        <Modal.Header>Document Status</Modal.Header>
+        <Modal.Header>Document Details</Modal.Header>
         <Modal.Content>
           <Table padded="very">
             <Table.Body>
@@ -163,7 +164,7 @@ export default function Documents(props) {
                   <h3>Document Name</h3>
                 </Table.Cell>
                 <Table.Cell>
-                  <h3>Rental Agreement</h3>
+                    <h3>{docInfo.title}</h3>
                 </Table.Cell>
               </Table.Row>
               <Table.Row>
@@ -171,7 +172,7 @@ export default function Documents(props) {
                   <h3>Document Hash</h3>
                 </Table.Cell>
                 <Table.Cell>
-                  <h3>0x337b2aF19e840E8761Ef7a90Ce05Fedf4E91E2B2</h3>
+                  {docInfo.hash}
                 </Table.Cell>
               </Table.Row>
 
@@ -181,35 +182,21 @@ export default function Documents(props) {
                 </Table.Cell>
                 <Table.Cell>
                   <Step.Group vertical fluid>
-                    <Step>
-                      <InfoCircleOutlined />
-                      <Step.Content>
-                        <p style={{ marginLeft: "14px" }}>Created On : xxxx</p>
-                      </Step.Content>
-                    </Step>
-
+                    { docInfo.signatures ? docInfo.signatures.map((signature) => {return(
                     <Step>
                       <FieldTimeOutlined />
                       <Step.Content>
-                        <p style={{ marginLeft: "14px" }}>Signed On : xxxx</p>
+                    <p style={{ marginLeft: "14px" }}>{signature.signer} Signed On : {new Date(parseInt(signature.timestamp) * 1000).toDateString()}</p>
                       </Step.Content>
-                    </Step>
+                    </Step>)}) : null
+                    }
 
-                    <Step>
-                      <EditOutlined />
-                      <Step.Content>
-                        <p style={{ marginLeft: "14px" }}> Notary Signed On : xxxx</p>
-                      </Step.Content>
-                    </Step>
                   </Step.Group>
                 </Table.Cell>
               </Table.Row>
               <Table.Row>
                 <Table.Cell>
-                  <h3>Notarised</h3>
-                </Table.Cell>
-                <Table.Cell>
-                  <Badge count="No" />
+                  <Badge style={{backgroundColor: "green"}} count={docInfo.notarySigned ? "Notarized" : null} />
                 </Table.Cell>
               </Table.Row>
             </Table.Body>
