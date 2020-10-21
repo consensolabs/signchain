@@ -68,7 +68,7 @@ export default function Profile(props) {
                       </Table.Row>
                       <Table.Row>
                         <Table.Cell>
-                          <h3>User Adress</h3>
+                          <h3>User Address</h3>
                         </Table.Cell>
                         <Table.Cell>
                           <h3>0x337b2aF19e840E8761Ef7a90Ce05Fedf4E91E2B2</h3>

@@ -1,10 +1,14 @@
 /* eslint-disable */
 import React, { useEffect, useState } from "react";
-import { Button, Icon, Loader, Table, Modal, Header, Form } from "semantic-ui-react";
-//import DocumentModal from "./DocumentModal";
-const index = require("../lib/e2ee");
+import { Button, Icon, Loader, Table, Modal, Step } from "semantic-ui-react";
+import { InfoCircleOutlined, FieldTimeOutlined, EditOutlined } from "@ant-design/icons";
+import { Badge } from "antd";
 
+const index = require("../lib/e2ee");
+import { Collapse } from "antd";
 const userType = { party: 0, notary: 1 };
+
+const { Panel } = Collapse;
 
 export default function Documents(props) {
   const password = localStorage.getItem("password");
@@ -15,7 +19,20 @@ export default function Documents(props) {
   const [docs, setDocs] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  console.log(docs);
+  console.log("Docs", docs);
+
+  let modalData = docs.map(value => {
+    let title = value.title;
+    let TimeStamp = value.timestamp;
+    let isSigned = value.signStatus;
+    console.log("Title", title);
+    console.log("timestamp", TimeStamp);
+    console.log("isSigned", isSigned);
+
+    return [title, TimeStamp, isSigned];
+  });
+
+  console.log("MODALLLL DATA", modalData);
 
   useEffect(() => {
     if (props.writeContracts) {
@@ -63,7 +80,7 @@ export default function Documents(props) {
       <Table singleLine striped>
         <Table.Header>
           <Table.Row>
-            <Table.HeaderCell colSpan="4">Your documents</Table.HeaderCell>
+            <Table.HeaderCell colSpan="5">Your documents</Table.HeaderCell>
           </Table.Row>
         </Table.Header>
         <Table.Header>
@@ -71,7 +88,8 @@ export default function Documents(props) {
             <Table.HeaderCell>Name</Table.HeaderCell>
             <Table.HeaderCell>Registration Date</Table.HeaderCell>
             <Table.HeaderCell>Status</Table.HeaderCell>
-            <Table.HeaderCell>Actions</Table.HeaderCell>
+            <Table.HeaderCell>Sign</Table.HeaderCell>
+            <Table.HeaderCell>Actions </Table.HeaderCell>
           </Table.Row>
         </Table.Header>
 
@@ -112,7 +130,12 @@ export default function Documents(props) {
                         <Icon name="signup" />
                         Sign Document
                       </Button>
-                    ) : null}
+                    ) : (
+                      <Button disabled basic color="blue" icon labelPosition="left">
+                        <Icon name="signup" />
+                        Sign Document
+                      </Button>
+                    )}
                   </Table.Cell>
                   <Table.Cell collapsing textAlign="right">
                     <Button icon="download" onClick={() => downloadFile(value.hash)} />
@@ -151,28 +174,42 @@ export default function Documents(props) {
                   <h3>0x337b2aF19e840E8761Ef7a90Ce05Fedf4E91E2B2</h3>
                 </Table.Cell>
               </Table.Row>
+
               <Table.Row>
                 <Table.Cell>
-                  <h3>Created By</h3>
+                  <h3>Signature TimeStamp</h3>
                 </Table.Cell>
                 <Table.Cell>
-                  <h3>Koushith@consensolabs.com</h3>
+                  <Step.Group vertical fluid>
+                    <Step>
+                      <InfoCircleOutlined />
+                      <Step.Content>
+                        <p style={{ marginLeft: "14px" }}>Created On : xxxx</p>
+                      </Step.Content>
+                    </Step>
+
+                    <Step>
+                      <FieldTimeOutlined />
+                      <Step.Content>
+                        <p style={{ marginLeft: "14px" }}>Signed On : xxxx</p>
+                      </Step.Content>
+                    </Step>
+
+                    <Step>
+                      <EditOutlined />
+                      <Step.Content>
+                        <p style={{ marginLeft: "14px" }}> Notary Signed On : xxxx</p>
+                      </Step.Content>
+                    </Step>
+                  </Step.Group>
                 </Table.Cell>
               </Table.Row>
               <Table.Row>
                 <Table.Cell>
-                  <h3>Signature Status</h3>
+                  <h3>Notarised</h3>
                 </Table.Cell>
                 <Table.Cell>
-                  <Button color="green">Sign Now</Button>
-                </Table.Cell>
-              </Table.Row>
-              <Table.Row>
-                <Table.Cell>
-                  <h3>Notarised?</h3>
-                </Table.Cell>
-                <Table.Cell>
-                  <h3>No</h3>
+                  <Badge count="No" />
                 </Table.Cell>
               </Table.Row>
             </Table.Body>
