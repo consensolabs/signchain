@@ -1,4 +1,4 @@
- /* eslint-disable */ 
+/* eslint-disable */
 import React, {useEffect, useState} from 'react';
 import Dashboard from '../Dashboard'
 import 'antd/dist/antd.css';
@@ -109,7 +109,8 @@ const [current, setCurrent] = useState(0)
             <Button type="primary" loading={submitting} onClick={() => {
               const allParties = parties;
               allParties.push(caller);
-              index.registerDoc(allParties, fileInfo.fileHash, title, fileInfo.fileKey, password, setSubmitting, props.tx, props.writeContracts, signer, docNotary)}}  className="button">
+              index.registerDoc(allParties, fileInfo.fileHash, fileInfo.cipherKey, title, fileInfo.fileKey,
+                  setSubmitting, props.tx, props.writeContracts, signer, docNotary)}}  className="button">
               Sign & Share
             </Button>
           )}
