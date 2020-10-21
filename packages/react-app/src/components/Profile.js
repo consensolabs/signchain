@@ -27,6 +27,7 @@ export default function Profile({ceramic, idx}) {
            try{
             if(idx) {
                 const profileSchema = localStorage.getItem("profileSchema");
+                console.log(profileSchema)
                 const data = await idx.get(profileSchema, idx.id)
                 setUser(data)
                 console.log(data);
@@ -63,7 +64,7 @@ export default function Profile({ceramic, idx}) {
                   <Grid.Column width={4}>
                     <Card
                       image="https://react.semantic-ui.com/images/avatar/large/patrick.png"
-                      header="Yathish"
+                      header={user.name}
                       extra={extra}
                       style={{ height: "387.2px" }}
                     />
@@ -75,14 +76,6 @@ export default function Profile({ceramic, idx}) {
                         <Card.Content>
                           <Table padded="very">
                             <Table.Body>
-                              <Table.Row>
-                                <Table.Cell>
-                                  <h3>User Name</h3>
-                                </Table.Cell>
-                                <Table.Cell>
-                                    <h3>{user.name}</h3>
-                                </Table.Cell>
-                              </Table.Row>
                               <Table.Row>
                                 <Table.Cell>
                                   <h3>Email</h3>

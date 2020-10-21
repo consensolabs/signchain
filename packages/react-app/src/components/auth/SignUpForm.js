@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import "./Form.css";
 import { Checkbox } from "semantic-ui-react";
+import { Button } from 'antd';
 import { Link, useHistory } from "react-router-dom";
 import logo from "../../images/logoInverted.png";
 import Cookies from "universal-cookie";
@@ -21,26 +22,36 @@ function SignUpForm({ writeContracts, tx, ceramic, idx }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [notary, setNotary] = useState(false);
+
+  const SignupStatus = {init: 0, wallet: 1, ceramic: 2, contract: 3}
+  const [signupStatus, setSignupStatus] = useState(SignupStatus.init)
   const userType = { party: 0, notary: 1 };
+
+  console.log(idx)
 
 
     const registerUser = async () => {
+
+        setSignupStatus(SignupStatus.wallet)
         const walletStatus = await index.createWallet(password)
+
         if (walletStatus){
-            console.log(idx)
+
             const accounts = await index.getAllAccounts(password)
+            setSignupStatus(SignupStatus.ceramic)
             const profileId = await createDefinition(ceramic, {
                 name:"Signchain Profile",
                 schema: profileSchema
             })
-
+           
             await idx.set(profileId, {
                 name:name,
                 email:email,
                 notary:notary
             })
-            console.log(profileId)
+
             localStorage.setItem("profileSchema", profileId);
+            setSignupStatus(SignupStatus.contract)
             const registrationStatus = await index.registerUser(name, email, accounts[0], notary ? userType.notary : userType.party, tx, writeContracts)
             if (registrationStatus) {
                 cookies.set('userAddress', registrationStatus);
@@ -106,9 +117,26 @@ function SignUpForm({ writeContracts, tx, ceramic, idx }) {
               />
             </div>
 
-            <button className="form-input-btn" onClick={registerUser}>
+            { signupStatus == SignupStatus.init ?
+             <Button type="primary" className="form-input-btn" onClick={registerUser}>
               Sign Up
-            </button>
+            </Button> :
+            (
+              
+              signupStatus == SignupStatus.wallet ?
+              <Button type="primary" loading className="form-input-btn" onClick={registerUser}>
+              Creating wallet
+            </Button> :
+             ( signupStatus == SignupStatus.ceramic ?
+             <Button type="primary" loading className="form-input-btn" onClick={registerUser}>
+              Creating IDX wallet
+            </Button> :
+              <Button type="primary" loading className="form-input-btn" onClick={registerUser}>
+              Creating contract account
+            </Button>
+             )
+            )
+            }
             <span className="form-input-login">
               Already have an account? Login <Link to="/login">here</Link>
             </span>

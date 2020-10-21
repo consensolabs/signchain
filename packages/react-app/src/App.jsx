@@ -25,7 +25,7 @@ const Ceramic = require('@ceramicnetwork/ceramic-http-client').default;
 const { IDX } = require('@ceramicstudio/idx');
 const { publishSchemas, schemasList } = require('@ceramicstudio/idx-schemas')
 const Wallet = require('identity-wallet').default
-const ceramic = new Ceramic('http://localhost:7007');
+const ceramic = new Ceramic('http://15.207.222.193:7007');
 
 const blockExplorer = "https://etherscan.io/"
 const mainnetProvider = getDefaultProvider("mainnet", { infura: INFURA_ID, etherscan: ETHERSCAN_KEY, quorum: 1 })
