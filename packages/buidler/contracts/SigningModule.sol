@@ -16,6 +16,7 @@ contract SigningModule {
     struct SignedDocument {
         string title;
         uint timestamp;
+        address owner;
         address[] signers;
         Signature[] signatures;
     }
@@ -80,6 +81,7 @@ contract SigningModule {
         signedDocuments[docHash].timestamp = now;
         signedDocuments[docHash].title = title;
         signedDocuments[docHash].signers = signers;
+        signedDocuments[docHash].owner = msg.sender;
 
     }
 
