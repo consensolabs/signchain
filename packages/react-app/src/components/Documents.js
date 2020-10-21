@@ -7,45 +7,41 @@ const index = require("../lib/e2ee");
 const userType = { party: 0, notary: 1 };
 
 export default function Documents(props) {
+  const password = localStorage.getItem("password");
 
+  const [open, setOpen] = useState(false);
+  const [caller, setCaller] = useState({});
+  const [signer, setSigner] = useState({});
+  const [docs, setDocs] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-    const password = localStorage.getItem('password')
+  console.log(docs);
 
-    const [open, setOpen] = useState(false);
-    const [caller, setCaller] = useState({})
-    const [signer, setSigner] = useState({})
-    const [docs, setDocs] = useState([])
-    const [loading, setLoading] = useState(false)
-
-    console.log(docs)
-
-    useEffect(() => {
-        if (props.writeContracts) {
-            props.writeContracts.Signchain.on("DocumentSigned", (author, oldValue, newValue, event) => {
-                getAllDoc()
-              });
-              props.writeContracts.Signchain.on("DocumentNatarized", (author, oldValue, newValue, event) => {
-                getAllDoc()
-              });
-            getAllDoc()
-            setSigner(props.userProvider.getSigner())
-            index.getAllUsers(props.address, props.tx, props.writeContracts).then(result => {
-                console.log("Registered users:", result)
-                setCaller(result.caller)
-                
-            })
-        }
-
-    }, [props.writeContracts])
-
-    const getAllDoc = async () =>{
-        setLoading(true)
-        const result = await index.getAllFile(props.tx, props.writeContracts, props.address)
-        if(result.length>0) {
-            setDocs(result)
-        }
-        setLoading(false)
+  useEffect(() => {
+    if (props.writeContracts) {
+      props.writeContracts.Signchain.on("DocumentSigned", (author, oldValue, newValue, event) => {
+        getAllDoc();
+      });
+      props.writeContracts.Signchain.on("DocumentNatarized", (author, oldValue, newValue, event) => {
+        getAllDoc();
+      });
+      getAllDoc();
+      setSigner(props.userProvider.getSigner());
+      index.getAllUsers(props.address, props.tx, props.writeContracts).then(result => {
+        console.log("Registered users:", result);
+        setCaller(result.caller);
+      });
     }
+  }, [props.writeContracts]);
+
+  const getAllDoc = async () => {
+    setLoading(true);
+    const result = await index.getAllFile(props.tx, props.writeContracts, props.address);
+    if (result.length > 0) {
+      setDocs(result);
+    }
+    setLoading(false);
+  };
 
   const downloadFile = docHash => {
     console.log("Downloading:", docHash);
@@ -67,7 +63,7 @@ export default function Documents(props) {
       <Table singleLine striped>
         <Table.Header>
           <Table.Row>
-            <Table.HeaderCell colSpan="6">Your documents</Table.HeaderCell>
+            <Table.HeaderCell colSpan="4">Your documents</Table.HeaderCell>
           </Table.Row>
         </Table.Header>
         <Table.Header>
@@ -75,24 +71,36 @@ export default function Documents(props) {
             <Table.HeaderCell>Name</Table.HeaderCell>
             <Table.HeaderCell>Registration Date</Table.HeaderCell>
             <Table.HeaderCell>Status</Table.HeaderCell>
+            <Table.HeaderCell>Actions</Table.HeaderCell>
           </Table.Row>
         </Table.Header>
 
+        <Table.Body>
+          {!loading ? (
+            docs.map(value => {
+              return (
+                <Table.Row>
+                  <a>
+                    <Table.Cell collapsing onClick={() => setOpen(true)}>
+                      <Icon name="file outline" /> {value.title}
+                    </Table.Cell>
+                  </a>
+                  <Table.Cell>{new Date(value.timestamp).toDateString()}</Table.Cell>
 
-            <Table.Body>
-                {
-                    !loading ?
-                        docs.map((value) => {
-                            return (
-                                <Table.Row>
-                                    <a><Table.Cell collapsing  onClick={()=>setOpen(true)}>
-                                        <Icon name='file outline'/> {value.title}
-                                    </Table.Cell>
-                                    </a>
-                                    <Table.Cell>{new Date(value.timestamp).toDateString()}</Table.Cell>
+                  <Table.Cell>
+                    {" "}
+                    {value.signStatus ? (
+                      <div>
+                        <Icon name="circle" color="green" />
+                        Signed
+                      </div>
+                    ) : (
+                      <div>
+                        <Icon name="circle" color="red" /> Pending
+                      </div>
+                    )}
+                  </Table.Cell>
 
-                                    <Table.Cell>  { value.signStatus ? <div><Icon name='circle' color='green' />Signed</div> : <div><Icon name='circle' color='red'/> Pending</div>}</Table.Cell>
-  
                   <Table.Cell>
                     {value.notary === caller.address && !value.notarySigned ? (
                       <Button basic color="blue" icon labelPosition="left" onClick={() => notarizeDocument(value.hash)}>
@@ -112,7 +120,7 @@ export default function Documents(props) {
                 </Table.Row>
               );
             })
-           : (
+          ) : (
             <Loader active size="medium">
               Loading
             </Loader>
@@ -176,7 +184,6 @@ export default function Documents(props) {
           </Button>
         </Modal.Actions>
       </Modal>
-
     </div>
   );
 }

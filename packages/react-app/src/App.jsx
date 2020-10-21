@@ -14,12 +14,13 @@ import { Transactor } from "./helpers";
 import {Account, Faucet} from "./components";
 import SignUpForm from "./components/auth/SignUpForm";
 import LoginForm from "./components/auth/LoginForm";
-import Dashboard from "./components/Dashboard";
+import Share from "./components/Share";
 import Documents from "./components/Documents";
 import Profile from "./components/Profile";
 import Layout from "./components/Layout";
 import Steps from './components/Stepper/Steps'
 import { INFURA_ID, ETHERSCAN_KEY } from "./constants";
+import Dashboard from "./components/Dashboard";
 
 const blockExplorer = "https://etherscan.io/"
 const mainnetProvider = getDefaultProvider("mainnet", { infura: INFURA_ID, etherscan: ETHERSCAN_KEY, quorum: 1 })
@@ -121,7 +122,7 @@ function App() {
               
               >
                     {/* <Steps/> */}
-                <Route exact path="/dashboard" render={(props) =>
+                <Route exact path="/share" render={(props) =>
                     <Steps
                         address={address}
                         tx={tx}
@@ -131,7 +132,7 @@ function App() {
                         {...props}
                     />}/>
                    
-         <Route exact path="/documents" render={(props) =>
+                 <Route exact path="/documents" render={(props) =>
                     <Documents
                         address={address}
                         tx={tx}
@@ -139,12 +140,16 @@ function App() {
                         userProvider={userProvider}
                         {...props}
                     />}/>
-                <Route exact path="/profile" render={(props) =>
+                    <Route exact path="/profile" render={(props) =>
                     <Profile
                         address={address}
                         tx={tx}
                         writeContracts={writeContracts}
                         {...props}
+                    />}/>
+                <Route exact path="/dashboard" render={(props) =>
+                    <Dashboard
+                       
                     />}/>
               </Layout>
             </Switch>
