@@ -232,12 +232,46 @@ export const getAllFile = async function(tx, writeContracts, address){
             timestamp: parseInt(signDetails.timestamp) * 1000,
             signStatus: signStatus,
             signers: signDetails.signers,
+            owner: signDetails.owner,
             partySigned: partySigned,
             notary: notaryInfo.notaryAddress,
             notarySigned: notaryInfo.notarized
         }
         result.push(value)
     }
+    return result
+}
+
+export const getFile = async function(tx, writeContracts, address, docHash){
+
+        const signDetails = await tx(writeContracts.Signchain.getSignedDocuments(docHash))
+        if (!signDetails.signers.length)
+          return false
+        const notaryInfo = await getNotaryInfo(docHash, tx, writeContracts)
+        let signStatus = true
+        let partySigned = false
+        if (signDetails.signers.length !== signDetails.signatures.length){
+            const array = signDetails.signatures.filter((item) => item[0]===address.toString())
+            if (array.length===1){
+                partySigned = true
+            }
+            signStatus = false;
+        }else{
+            signStatus = true
+            partySigned = true
+        }
+        let result = {
+            hash: docHash,
+            title: signDetails.title,
+            timestamp: parseInt(signDetails.timestamp) * 1000,
+            signStatus: signStatus,
+            owner: signDetails.owner,
+            signers: signDetails.signers,
+            partySigned: partySigned,
+            notary: notaryInfo.notaryAddress,
+            notarySigned: notaryInfo.notarized
+        }
+
     return result
 }
 
