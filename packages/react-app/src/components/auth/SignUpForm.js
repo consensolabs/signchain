@@ -27,19 +27,20 @@ function SignUpForm({ writeContracts, tx, ceramic, idx }) {
     const registerUser = async () => {
         const walletStatus = await index.createWallet(password)
         if (walletStatus){
+            console.log(idx)
             const accounts = await index.getAllAccounts(password)
-            // const profileId = await createDefinition(ceramic, {
-            //     name:"Signchain Profile",
-            //     schema: profileSchema
-            // })
+            const profileId = await createDefinition(ceramic, {
+                name:"Signchain Profile",
+                schema: profileSchema
+            })
 
-            // await idx.set(profileId, {
-            //     name:name,
-            //     email:email,
-            //     notary:notary
-            // })
-            // console.log(profileId)
-            // localStorage.setItem("profileSchema", profileId);
+            await idx.set(profileId, {
+                name:name,
+                email:email,
+                notary:notary
+            })
+            console.log(profileId)
+            localStorage.setItem("profileSchema", profileId);
             const registrationStatus = await index.registerUser(name, email, accounts[0], notary ? userType.notary : userType.party, tx, writeContracts)
             if (registrationStatus) {
                 cookies.set('userAddress', registrationStatus);
