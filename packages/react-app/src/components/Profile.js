@@ -1,8 +1,9 @@
 /* eslint-disable */
 import React, { useEffect, useState } from "react";
 
-import { Header, Image, Grid, Card, Icon, Table } from "semantic-ui-react";
-import { Form, Input, Button, Checkbox } from "antd";
+import { Loader, Grid, Card, Icon, Table } from "semantic-ui-react";
+// import { Form, Input, Button, Checkbox } from "antd";
+import "./Profile.css";
 const index = require("../lib/e2ee.js");
 
 
@@ -40,12 +41,12 @@ export default function Profile({ceramic, idx}) {
     }, [idx] )
 
 
-  // const extra = (
-  //   <a>
-  //     <Icon name="user" />
-  //     Notary
-  //   </a>
-  // );
+  const extra = (
+    <a>
+      <Icon name="user" />
+      Notary
+    </a>
+  );
 
   // const layout = {
   //   labelCol: { span: 8 },
@@ -54,9 +55,9 @@ export default function Profile({ceramic, idx}) {
   // const tailLayout = {
   //   wrapperCol: { offset: 8, span: 16 },
   // };
-      if(user){
-        console.log(user)
+
         return (
+            user ?
             <div className="main__container">
               <Grid columns="two">
                 <Grid.Row>
@@ -64,14 +65,14 @@ export default function Profile({ceramic, idx}) {
                     <Card
                       image="https://react.semantic-ui.com/images/avatar/large/patrick.png"
                       header={user.name}
+                      extra={user.notary ? extra : null}
                       style={{ height: "387.2px" }}
                     />
                   </Grid.Column>
         
-                  <Grid.Column width={12}>
+                  <Grid.Column width={12} style={{marginTop: "18px"}}>
                     <Card.Group>
-                      <Card fluid>
-                        <Card.Content>
+              
                           <Table padded="very">
                             <Table.Body>
                               <Table.Row>
@@ -92,7 +93,7 @@ export default function Profile({ceramic, idx}) {
                               </Table.Row>
                               <Table.Row>
                                 <Table.Cell>
-                                  <h3>User Type</h3>
+                                  <h3>User type</h3>
                                 </Table.Cell>
                                 <Table.Cell>
                                   {
@@ -110,85 +111,15 @@ export default function Profile({ceramic, idx}) {
                               </Table.Row>
                             </Table.Body>
                           </Table>
-                        </Card.Content>
-                      </Card>
+                   
                     </Card.Group>
                   </Grid.Column>
                 </Grid.Row>
               </Grid>
-            </div>
+            </div> :
+            <Loader active size="medium">
+            Fetching profile
+          </Loader>
           );
-      }
-
-      else{
-        return (
-            <div className="main__container">
-              <Grid columns="two">
-                <Grid.Row>
-                  <Grid.Column width={4}>
-                    <Card
-                      image="https://react.semantic-ui.com/images/avatar/large/patrick.png"
-                      header="Loading.."
-                      style={{ height: "387.2px" }}
-                    />
-                  </Grid.Column>
-        
-                  <Grid.Column width={12}>
-                    <Card.Group>
-                      <Card fluid>
-                        <Card.Content>
-                          <Table padded="very">
-                            <Table.Body>
-                              <Table.Row>
-                                <Table.Cell>
-                                  <h3>User Name</h3>
-                                </Table.Cell>
-                                <Table.Cell>
-                                  <h3></h3>
-                                </Table.Cell>
-                              </Table.Row>
-                              <Table.Row>
-                                <Table.Cell>
-                                  <h3>Email</h3>
-                                </Table.Cell>
-                                <Table.Cell>
-                                  <h3></h3>
-                                </Table.Cell>
-                              </Table.Row>
-                              <Table.Row>
-                                <Table.Cell>
-                                  <h3>User Adress</h3>
-                                </Table.Cell>
-                                <Table.Cell>
-                                  <h3></h3>
-                                </Table.Cell>
-                              </Table.Row>
-                              <Table.Row>
-                                <Table.Cell>
-                                  <h3>User Type</h3>
-                                </Table.Cell>
-                                <Table.Cell>
-                                  <h3>Notary</h3>
-                                </Table.Cell>
-                              </Table.Row>
-                              <Table.Row>
-                                <Table.Cell>
-                                  <h3>Member Since</h3>
-                                </Table.Cell>
-                                <Table.Cell>
-                                  <h3></h3>
-                                </Table.Cell>
-                              </Table.Row>
-                            </Table.Body>
-                          </Table>
-                        </Card.Content>
-                      </Card>
-                    </Card.Group>
-                  </Grid.Column>
-                </Grid.Row>
-              </Grid>
-            </div>
-          );
-      }
-  
+      
 }

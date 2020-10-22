@@ -15,12 +15,15 @@ import {Account, Faucet} from "./components";
 import {profileSchema, documentSchema} from "./ceramic/schemas"
 import SignUpForm from "./components/auth/SignUpForm";
 import LoginForm from "./components/auth/LoginForm";
+import Share from "./components/Share";
 import Dashboard from "./components/Dashboard";
 import Documents from "./components/Documents";
 import Profile from "./components/Profile";
 import Layout from "./components/Layout";
 import Steps from './components/Stepper/Steps'
+import Verify from './components/Verify/Verify'
 import { INFURA_ID, ETHERSCAN_KEY } from "./constants";
+
 const Ceramic = require('@ceramicnetwork/ceramic-http-client').default;
 const { IDX } = require('@ceramicstudio/idx');
 const { publishSchemas, schemasList } = require('@ceramicstudio/idx-schemas')
@@ -160,8 +163,9 @@ function App() {
               blockExplorer={blockExplorer}
               
               >
+
                     {/* <Steps/> */}
-                <Route exact path="/dashboard" render={(props) =>
+                <Route exact path="/sign" render={(props) =>
                     <Steps
                         address={address}
                         tx={tx}
@@ -170,8 +174,21 @@ function App() {
                         userProvider={userProvider}
                         {...props}
                     />}/>
+               <Route exact path="/dashboard" render={(props) =>
+                    <Dashboard
+                       
+                    />}/>
+            <Route exact path="/verify" render={(props) =>
+            <Verify
+                address={address}
+                tx={tx}
+                writeContracts={writeContracts}
+                readContracts={readContracts}
+                userProvider={userProvider}
+                {...props}
+            />}/>
                    
-         <Route exact path="/documents" render={(props) =>
+                 <Route exact path="/documents" render={(props) =>
                     <Documents
                         address={address}
                         tx={tx}
@@ -179,7 +196,7 @@ function App() {
                         userProvider={userProvider}
                         {...props}
                     />}/>
-                <Route exact path="/profile" render={(props) =>
+                    <Route exact path="/profile" render={(props) =>
                     <Profile
                         address={address}
                         tx={tx}
@@ -188,6 +205,7 @@ function App() {
                         ceramic={ceramic}
                         idx={idx}
                     />}/>
+            
               </Layout>
             </Switch>
           </div>
