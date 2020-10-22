@@ -1,13 +1,12 @@
 /* eslint-disable */
 
 import React from "react";
-import { Table, Dropdown } from "semantic-ui-react";
+import { Table, Icon } from "semantic-ui-react";
 import "./Preview.css";
 
 const index = require("../../lib/e2ee.js");
 
 const Preview = ({ parties, fileInfo, title }) => {
-
   return (
     <div className="preview__container">
       <div className="wrapper">
@@ -45,15 +44,18 @@ const Preview = ({ parties, fileInfo, title }) => {
             <Table.Row>
               <Table.HeaderCell style={{ color: "#4A5568" }}>Document Title</Table.HeaderCell>
               <Table.HeaderCell style={{ color: "#4A5568" }}>Document Type</Table.HeaderCell>
-              <Table.HeaderCell style={{ color: "#4A5568" }}>Size</Table.HeaderCell>
             </Table.Row>
           </Table.Header>
 
           <Table.Body>
             <Table.Row>
-              <Table.Cell>{title}</Table.Cell>
+              <Table.Cell>
+                <span>
+                  <Icon name="file pdf outline" />
+                </span>
+                {title}
+              </Table.Cell>
               <Table.Cell>{fileInfo.fileFormat}</Table.Cell>
-              <Table.Cell>3 MB</Table.Cell>
             </Table.Row>
           </Table.Body>
         </Table>

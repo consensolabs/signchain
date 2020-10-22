@@ -29,3 +29,26 @@
 .spacing {
   margin: 14px !important;
 }
+
+.dashboard__container {
+  margin: 18px;
+}
+/* 
+.inner__container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 12px 12px 12px;
+  align-content: start;
+  width: 100%;
+} */
+
+.inner__wrapper {
+  width: 60%;
+}
+
+/* @media only screen and (max-width: 600px) {
+  .wrapper {
+    display: flex;
+    flex-direction: column;
+  }
+} */

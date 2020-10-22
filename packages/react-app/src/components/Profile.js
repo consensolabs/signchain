@@ -2,7 +2,8 @@
 import React, { useEffect, useState } from "react";
 
 import { Header, Image, Grid, Card, Icon, Table } from "semantic-ui-react";
-import { Form, Input, Button, Checkbox } from "antd";
+// import { Form, Input, Button, Checkbox } from "antd";
+import "./Profile.css";
 const index = require("../lib/e2ee.js");
 
 export default function Profile(props) {
@@ -24,15 +25,8 @@ export default function Profile(props) {
     </a>
   );
 
-  // const layout = {
-  //   labelCol: { span: 8 },
-  //   wrapperCol: { span: 16 },
-  // };
-  // const tailLayout = {
-  //   wrapperCol: { offset: 8, span: 16 },
-  // };
   return (
-    <div className="main__container">
+    <div className="profile__container">
       <Grid columns="two">
         <Grid.Row>
           <Grid.Column width={4}>

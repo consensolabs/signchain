@@ -149,3 +149,12 @@
   color: var(--font-body);
   font-size: 1.2rem;
 }
+
+.form__container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+
+  width: 100%;
+}

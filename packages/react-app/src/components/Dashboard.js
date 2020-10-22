@@ -8,47 +8,53 @@ import { Link } from "react-router-dom";
 
 const Dashboard = () => (
   <>
-    <div className="main__container card__container">
-      <Grid divided="vertically" className="spacing">
-        <Grid.Row columns={5}>
+    <div className="dashboard__container">
+      <div className="inner__wrapper">
+        <Grid container columns={3}>
           <Grid.Column>
-            <Link to="/sign">
-              <div className="card">
-                <div className="inner__container">
-                  <div className="img">
-                    <img src={Sign} alt="" srcset="" />
+            <div className="wrapper">
+              <Link to="/sign">
+                <div className="card">
+                  <div className="card__container">
+                    <div className="img">
+                      <img src={Sign} alt="" srcset="" />
+                    </div>
+                    <p className="title">Sign & Send</p>
                   </div>
-                  <p className="title">Sign & Send</p>
                 </div>
-              </div>
-            </Link>
+              </Link>
+            </div>
           </Grid.Column>
           <Grid.Column>
-            <Link to="/sign">
-              <div className="card">
-                <div className="inner__container">
-                  <div className="img">
-                    <img src={Secure} alt="" srcset="" />
+            <div className="wrapper">
+              <Link to="/sign">
+                <div className="card">
+                  <div className="card__container">
+                    <div className="img">
+                      <img src={Secure} alt="" srcset="" />
+                    </div>
+                    <p className="title">Secure & Share</p>
                   </div>
-                  <p className="title">Secure & Share</p>
                 </div>
-              </div>
-            </Link>
+              </Link>
+            </div>
           </Grid.Column>
           <Grid.Column>
-            <Link to="/verify">
-              <div className="card">
-                <div className="inner__container">
-                  <div className="img">
-                    <img src={Verify} alt="" srcset="" />
+            <div className="wrapper">
+              <Link to="/verify">
+                <div className="card">
+                  <div className="card__container">
+                    <div className="img">
+                      <img src={Verify} alt="" srcset="" />
+                    </div>
+                    <p className="title">Verify Document</p>
                   </div>
-                  <p className="title">Verify Document</p>
                 </div>
-              </div>
-            </Link>
+              </Link>
+            </div>
           </Grid.Column>
-        </Grid.Row>
-      </Grid>
+        </Grid>
+      </div>
     </div>
   </>
 );

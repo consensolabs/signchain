@@ -22,36 +22,38 @@ function LoginForm(props) {
 
   return (
     <>
-      <div className="form-container">
-        <div className="form-content-left">
-          <div className="logo_inverted ">
-            <img src={logo} alt="" srcset="" />
-          </div>
-          <div className="form">
-            <h2>Login to your Account</h2>
-
-            <div className="form-inputs">
-              <label className="form-label">Password</label>
-              <input
-                className="form-input"
-                type="password"
-                name="password"
-                placeholder="Enter your password"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-              />
+      <div className="form__container">
+        <div className="form-container">
+          <div className="form-content-left">
+            <div className="logo_inverted ">
+              <img src={logo} alt="" srcset="" />
             </div>
+            <div className="form">
+              <h2>Login to your Account</h2>
 
-            <button className="form-input-btn" onClick={loginUser}>
-              Login
-            </button>
-            <span className="form-input-login">
-              Haven't registered ? Sign Up <Link to="/signup">here</Link>
-            </span>
+              <div className="form-inputs">
+                <label className="form-label">Password</label>
+                <input
+                  className="form-input"
+                  type="password"
+                  name="password"
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                />
+              </div>
+
+              <button className="form-input-btn" onClick={loginUser}>
+                Login
+              </button>
+              <span className="form-input-login">
+                Haven't registered ? Sign Up <Link to="/signup">here</Link>
+              </span>
+            </div>
           </div>
-        </div>
-        <div className="form-content-right">
-          <img src={test} className="form-img" alt="left" srcset="" />
+          <div className="form-content-right">
+            <img src={test} className="form-img" alt="left" srcset="" />
+          </div>
         </div>
       </div>
     </>

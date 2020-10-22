@@ -22,19 +22,6 @@ export default function Documents(props) {
 
   console.log("Docs", docs);
 
-  let modalData = docs.map(value => {
-    let title = value.title;
-    let TimeStamp = value.timestamp;
-    let isSigned = value.signStatus;
-    console.log("Title", title);
-    console.log("timestamp", TimeStamp);
-    console.log("isSigned", isSigned);
-
-    return [title, TimeStamp, isSigned];
-  });
-
-  console.log("MODALLLL DATA", modalData);
-
   useEffect(() => {
     if (props.writeContracts) {
       props.writeContracts.Signchain.on("DocumentSigned", (author, oldValue, newValue, event) => {
@@ -99,11 +86,18 @@ export default function Documents(props) {
             docs.map(value => {
               return (
                 <Table.Row>
-                  <a>
-                    <Table.Cell collapsing onClick={() => {setOpen(true); setDocInfo(value)}}>
+                  <Table.Cell
+                    collapsing
+                    onClick={() => {
+                      setOpen(true);
+                      setDocInfo(value);
+                    }}
+                  >
+                    <span style={{ color: " #0000EE", cursor: "pointer" }}>
                       <Icon name="file outline" /> {value.title}
-                    </Table.Cell>
-                  </a>
+                    </span>
+                  </Table.Cell>
+
                   <Table.Cell>{new Date(value.timestamp).toDateString()}</Table.Cell>
 
                   <Table.Cell>
@@ -164,16 +158,14 @@ export default function Documents(props) {
                   <h3>Document Name</h3>
                 </Table.Cell>
                 <Table.Cell>
-                    <h3>{docInfo.title}</h3>
+                  <h3>{docInfo.title}</h3>
                 </Table.Cell>
               </Table.Row>
               <Table.Row>
                 <Table.Cell>
                   <h3>Document Hash</h3>
                 </Table.Cell>
-                <Table.Cell>
-                  {docInfo.hash}
-                </Table.Cell>
+                <Table.Cell>{docInfo.hash}</Table.Cell>
               </Table.Row>
 
               <Table.Row>
@@ -182,21 +174,33 @@ export default function Documents(props) {
                 </Table.Cell>
                 <Table.Cell>
                   <Step.Group vertical fluid>
-                    { docInfo.signatures ? docInfo.signatures.map((signature) => {return(
-                    <Step>
-                      <FieldTimeOutlined />
-                      <Step.Content>
-                    <p style={{ marginLeft: "14px" }}>{signature.signer} Signed On : {new Date(parseInt(signature.timestamp) * 1000).toDateString()}</p>
-                      </Step.Content>
-                    </Step>)}) : null
-                    }
-
+                    {docInfo.signatures
+                      ? docInfo.signatures.map(signature => {
+                          return (
+                            <Step>
+                              <Icon name="time" />
+                              <Step.Content>
+                                <p style={{ marginLeft: "14px" }}>
+                                  {signature.signer}
+                                  <br />
+                                  <span style={{ fontWeight: "bold" }}>Signed On </span> :
+                                  {new Date(parseInt(signature.timestamp) * 1000).toDateString()}
+                                </p>
+                              </Step.Content>
+                            </Step>
+                          );
+                        })
+                      : null}
                   </Step.Group>
                 </Table.Cell>
               </Table.Row>
               <Table.Row>
                 <Table.Cell>
-                  <Badge style={{backgroundColor: "green"}} count={docInfo.notarySigned ? "Notarized" : null} />
+                  {docInfo.notarySigned ? (
+                    <Badge style={{ backgroundColor: "green" }} count="Notarized" />
+                  ) : (
+                    <Badge style={{ backgroundColor: "red" }} count=" Not yet Signed" />
+                  )}
                 </Table.Cell>
               </Table.Row>
             </Table.Body>

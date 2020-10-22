@@ -44,69 +44,71 @@ function SignUpForm({ writeContracts, tx }) {
 
   return (
     <>
-      <div className="form-container">
-        <div className="form-content-left">
-          <div className="logo_inverted">
-            <img src={logo} alt="" srcset="" />
-          </div>
-          <div className="form">
-            <h2>Create an Account</h2>
-            <div className="form-inputs">
-              <label className="form-label">Username</label>
-              <input
-                className="form-input"
-                type="text"
-                name="username"
-                placeholder="Enter your username"
-                value={name}
-                onChange={e => setName(e.target.value)}
-              />
+      <div className="form__container">
+        <div className="form-container">
+          <div className="form-content-left">
+            <div className="logo_inverted">
+              <img src={logo} alt="" srcset="" />
             </div>
-            <div className="form-inputs">
-              <label className="form-label">Email</label>
-              <input
-                className="form-input"
-                type="email"
-                name="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-              />
-            </div>
-            <div className="form-inputs">
-              <label className="form-label">Password</label>
-              <input
-                className="form-input"
-                type="password"
-                name="password"
-                placeholder="Enter your password"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-              />
-            </div>
+            <div className="form">
+              <h2>Create an Account</h2>
+              <div className="form-inputs">
+                <label className="form-label">Username</label>
+                <input
+                  className="form-input"
+                  type="text"
+                  name="username"
+                  placeholder="Enter your username"
+                  value={name}
+                  onChange={e => setName(e.target.value)}
+                />
+              </div>
+              <div className="form-inputs">
+                <label className="form-label">Email</label>
+                <input
+                  className="form-input"
+                  type="email"
+                  name="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                />
+              </div>
+              <div className="form-inputs">
+                <label className="form-label">Password</label>
+                <input
+                  className="form-input"
+                  type="password"
+                  name="password"
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                />
+              </div>
 
-            <div className="form-inputs">
-              <Checkbox
-                style={{ color: "#718096" }}
-                className="checkbox"
-                label="I'm a Notary"
-                checked={notary}
-                onChange={() => {
-                  setNotary(!notary);
-                }}
-              />
-            </div>
+              <div className="form-inputs">
+                <Checkbox
+                  style={{ color: "#718096" }}
+                  className="checkbox"
+                  label="I'm a Notary"
+                  checked={notary}
+                  onChange={() => {
+                    setNotary(!notary);
+                  }}
+                />
+              </div>
 
-            <button className="form-input-btn" onClick={registerUser}>
-              Sign Up
-            </button>
-            <span className="form-input-login">
-              Already have an account? Login <Link to="/login">here</Link>
-            </span>
+              <button className="form-input-btn" onClick={registerUser}>
+                Sign Up
+              </button>
+              <span className="form-input-login">
+                Already have an account? Login <Link to="/login">here</Link>
+              </span>
+            </div>
           </div>
-        </div>
-        <div className="form-content-right">
-          <img src={test} className="form-img" alt="left" srcset="" />
+          <div className="form-content-right">
+            <img src={test} className="form-img" alt="left" srcset="" />
+          </div>
         </div>
       </div>
     </>
