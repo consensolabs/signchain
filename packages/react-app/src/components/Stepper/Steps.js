@@ -1,16 +1,16 @@
 /* eslint-disable */
 
-import React, { useEffect, useState } from "react";
-import Share from "../Share";
-import "antd/dist/antd.css";
-import "./stepper.css";
-import { Steps, Button, message } from "antd";
-import { Grid, Image } from "semantic-ui-react";
-import SelectFiles from "./SelectFiles";
-import SelectParties from "./SelectParties";
-import Preview from "./Preview";
+import React, {useEffect, useState} from 'react';
+import Dashboard from '../Dashboard'
+import 'antd/dist/antd.css';
+import './stepper.css';
+import { Steps, Button, message } from 'antd';
+import { Grid, Image } from 'semantic-ui-react'
+import SelectFiles from './SelectFiles'
+import SelectParties from './SelectParties'
+import Preview from './Preview'
 
-const index = require("../../lib/e2ee.js");
+const index = require('../../lib/e2ee.js')
 
 const { Step } = Steps;
 
@@ -139,9 +139,9 @@ const stepper = props => {
                       index.registerDoc(
                         allParties,
                         fileInfo.fileHash,
+                        fileInfo.cipherKey,
                         title,
                         fileInfo.fileKey,
-                        password,
                         setSubmitting,
                         props.tx,
                         props.writeContracts,
@@ -178,3 +178,4 @@ const stepper = props => {
 };
 
 export default stepper;
+

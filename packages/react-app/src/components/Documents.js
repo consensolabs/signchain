@@ -10,6 +10,7 @@ const userType = { party: 0, notary: 1 };
 
 const { Panel } = Collapse;
 
+
 export default function Documents(props) {
   const password = localStorage.getItem("password");
 
@@ -19,6 +20,7 @@ export default function Documents(props) {
   const [docs, setDocs] = useState([]);
   const [docInfo, setDocInfo] = useState({});
   const [loading, setLoading] = useState(false);
+  const [downloading, setDownloading] = useState(null);
 
   console.log("Docs", docs);
 
@@ -39,6 +41,7 @@ export default function Documents(props) {
     }
   }, [props.writeContracts]);
 
+
   const getAllDoc = async () => {
     setLoading(true);
     const result = await index.getAllFile(props.tx, props.writeContracts, props.address);
@@ -48,9 +51,10 @@ export default function Documents(props) {
     setLoading(false);
   };
 
-  const downloadFile = docHash => {
+  const downloadFile = (name, docHash) => {
     console.log("Downloading:", docHash);
-    index.downloadFile(docHash, password, props.tx, props.writeContracts).then(result => {});
+    setDownloading(docHash);
+    index.downloadFile(name, docHash, password, props.tx, props.writeContracts).then(result => {setDownloading(null)});
   };
 
   const signDocument = async docHash => {
@@ -133,7 +137,7 @@ export default function Documents(props) {
                     )}
                   </Table.Cell>
                   <Table.Cell collapsing textAlign="right">
-                    <Button icon="download" onClick={() => downloadFile(value.hash)} />
+                    <Button loading={downloading === value.hash} icon="download" onClick={() => downloadFile(value.title, value.hash)} />
                   </Table.Cell>
                 </Table.Row>
               );

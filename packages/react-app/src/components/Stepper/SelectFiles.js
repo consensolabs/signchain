@@ -6,11 +6,12 @@ import upload from "../../images/upload.png";
 import { Upload, message } from "antd";
 import { Dropdown, Input } from "semantic-ui-react";
 
+
 const index = require("../../lib/e2ee.js");
 
 const { Dragger } = Upload;
 
-const fileStorage = ["AWS", "Fleek"];
+const fileStorage = ["AWS", "Fleek", "Slate"];
 
 const SelectFiles = ({ setFileInfo, setSubmitting, setTitle, submitting }) => {
   const [selected, setSelected] = useState(false);
@@ -88,3 +89,4 @@ const SelectFiles = ({ setFileInfo, setSubmitting, setTitle, submitting }) => {
 };
 
 export default SelectFiles;
+

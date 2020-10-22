@@ -13,8 +13,8 @@ AWS.config.update({
 })
 let s3 = new AWS.S3();
 
-const fleekApiKey = "7niUfvisrFTfxJD8nyEBFg=="
-const fleekApiSecret = "UVlyrvRV/SWMLlvCBah18Eg9A4b4Ujqq0sFxbi35b+E="
+const fleekApiKey = "t8DYhMZ1ztjUtOFC8qEDqg=="
+const fleekApiSecret = "XwZyU7RZ3H2Z1QHhUdFdi4MJx8j1axJm2hEq1olRWeU="
 
 export const registerUser = async function(name, email, privateKey, userType, tx, writeContracts){
     try {
@@ -108,7 +108,7 @@ const getFileFleek = async (fileName)=>{
     return file.data
 }
 
-export const storeFileAWS = function (awsKey, encryptedData){
+const storeFileAWS = function (awsKey, encryptedData){
     return new Promise((resolve,reject) =>{
         s3.putObject({
             Bucket: 'secure-doc-test',
@@ -124,7 +124,7 @@ export const storeFileAWS = function (awsKey, encryptedData){
     })
 }
 
-export const getFileAWS = function (key){
+const getFileAWS = function (key){
     return new Promise((resolve,reject) =>{
         s3.getObject({
             Bucket: 'secure-doc-test',
@@ -139,9 +139,50 @@ export const getFileAWS = function (key){
     })
 }
 
+const storeFileSlate = function (encryptedData){
+    const url = 'https://slate.host/api/v1/upload-data/6a77ee11-afe1-4a09-9453-54438e4fd326';
+    let data = new FormData();
+
+    data.append("data", encryptedData);
+    return new Promise((resolve, reject) => {
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                Authorization: 'Basic SLA083fb498-8ab3-48ef-83af-fdf0af77eae4TE',
+            },
+            body: data
+        }).then((response)=>{
+            console.log("Slate response:", response)
+            resolve(response.json())
+        }).catch((error)=>{
+            console.log("Slate error:", error)
+            reject(error)
+        })
+    })
+
+}
+
+const getFileSlate = function(url){
+    return new Promise((resolve, reject) => {
+        fetch(url, {
+            headers: {
+                Authorization: 'Basic SLA083fb498-8ab3-48ef-83af-fdf0af77eae4TE',
+            }
+        }).then((response)=>{
+            return response.arrayBuffer()
+        }).then((data)=>{
+            let encryptedFile = new Uint8Array(data);
+            console.log("DATA:",encryptedFile)
+            resolve(Buffer.from(encryptedFile))
+        }).catch((error)=>{
+            console.log("ERROR:",error)
+            reject(error)
+        })
+    })
+}
+
 export const uploadFile = async function(party, file, password, setSubmitting, tx, writeContracts, signer,
                                          storageType){
-
     let encryptedKeys=[]
     let userAddress=[]
     const cipherKey = await e2e.generateCipherKey(password)
@@ -205,7 +246,6 @@ export const uploadFile = async function(party, file, password, setSubmitting, t
         }
     }
 }
-
 
 export const getAllFile = async function(tx, writeContracts, address){
     const documents = await tx(writeContracts.Signchain.getAllDocument())
@@ -276,16 +316,15 @@ export const getFile = async function(tx, writeContracts, address, docHash){
     return result
 }
 
-export const registerDoc = async function(party, fileHash, title, fileKey, password, setSubmitting, tx, writeContracts, signer, notary){
-
-    console.log(notary)
+export const registerDoc = async function(party, fileHash, cipherKey, title, fileKey, setSubmitting, tx,
+    writeContracts, signer, notary){
 
     let encryptedKeys=[]
     let userAddress=[]
 
     setSubmitting(true)
 
-    const cipherKey = await e2e.generateCipherKey(password)
+    //const cipherKey = await e2e.generateCipherKey(password)
 
     const signature = await signDocument(fileHash, tx, writeContracts , signer)
 
@@ -301,7 +340,6 @@ export const registerDoc = async function(party, fileHash, title, fileKey, passw
         userAddress.push(party[i].address)
     }
 
-        
     tx(writeContracts.Signchain.signAndShareDocument(
         fileHash,
         title,
@@ -319,10 +357,7 @@ export const registerDoc = async function(party, fileHash, title, fileKey, passw
     
 }
 
-
-
-export const uploadDoc = async function(file, password, setSubmitting,
-                                         storageType, setFileInfo){
+export const uploadDoc = async function(file, password, setSubmitting, storageType, setFileInfo){
 
     let encryptedKeys=[]
     let userAddress=[]
@@ -338,25 +373,36 @@ export const uploadDoc = async function(file, password, setSubmitting,
 
         const fileHash = e2e.calculateHash(fileInput)
 
-        const fileKey = fileHash.toString("hex").concat(".")
+        let fileKey = fileHash.toString("hex").concat(".")
             .concat(storageType).concat(".").concat(fileFormat)
 
         if (storageType==="Fleek"){
             await storeFileFleek(fileKey, encryptedFile)
+        }else if (storageType==="Slate"){
+            let blob = new Blob([encryptedFile])
+            const response = await storeFileSlate(blob)
+            fileKey = response.url
+            fileKey = fileKey.concat(".").concat(fileFormat)
         }else {
             await storeFileAWS(fileKey, encryptedFile)
         }
-        setSubmitting(false)
-        setFileInfo({cipherKey: cipherKey, fileKey: fileKey, fileHash: fileHash, fileName: file.name, fileFormat: fileFormat})
-
         
+        setSubmitting(false)
+        setFileInfo({
+            cipherKey: cipherKey,
+            fileKey: fileKey,
+            fileHash: fileHash,
+            fileName: file.name,
+            fileFormat: fileFormat
+        })
+
     }
 
     return {cipherKey: cipherKey}
 }
 
 
-export const downloadFile = async function (docHash,password, tx, writeContracts){
+export const downloadFile = async function (name, docHash,password, tx, writeContracts){
 
     let cipherKey = await tx(writeContracts.Signchain.getCipherKey(docHash))
     console.log(cipherKey)
@@ -372,26 +418,39 @@ export const downloadFile = async function (docHash,password, tx, writeContracts
     const privateKey = await wallet.login(password);
     const decryptedKey = await e2e.decryptKey(privateKey[0],encryptedKey)
     const documentHash = document.documentHash
-    const documentLocation = document.documentLocation
-
+    let documentLocation = document.documentLocation
+    console.log("Document Location:",documentLocation)
     const fileSplit= documentLocation.split(".")
     const fileFormat = fileSplit[fileSplit.length - 1]
     const storageType = fileSplit[fileSplit.length - 2]
     console.log("download storage type:",storageType)
+
     return new Promise((resolve)=>{
         if (storageType==="AWS") {
             getFileAWS(documentLocation).then((encryptedFile) => {
                 e2e.decryptFile(encryptedFile, decryptedKey).then((decryptedFile) => {
                     const hash2 = e2e.calculateHash(new Uint8Array(decryptedFile)).toString("hex")
-                    fileDownload(decryptedFile, "res2".concat(".").concat(fileFormat))
+                    fileDownload(decryptedFile, name.concat(".").concat(fileFormat))
                     resolve(true)
                 })
             })
-        }else{
+        }else if (storageType==="Fleek"){
             getFileFleek(documentLocation).then((encryptedFile) => {
+                console.log("Encrypted:",encryptedFile)
                 e2e.decryptFile(encryptedFile, decryptedKey).then((decryptedFile) => {
                     const hash2 = e2e.calculateHash(new Uint8Array(decryptedFile)).toString("hex")
-                    fileDownload(decryptedFile, "res2".concat(".").concat(fileFormat))
+                    fileDownload(decryptedFile, name.concat(".").concat(fileFormat))
+                    resolve(true)
+                })
+            })
+        }else {
+            documentLocation = documentLocation.slice(0, documentLocation.lastIndexOf("."))
+            console.log("document new location:",documentLocation)
+            getFileSlate(documentLocation).then((encryptedFile) => {
+                console.log("Encrypted Slate:",encryptedFile)
+                e2e.decryptFile(encryptedFile, decryptedKey).then((decryptedFile) => {
+                    const hash2 = e2e.calculateHash(new Uint8Array(decryptedFile)).toString("hex")
+                    fileDownload(decryptedFile, name.concat(".").concat(fileFormat))
                     resolve(true)
                 })
             })
@@ -442,7 +501,6 @@ export const notarizeDoc = async function(fileHash, tx, writeContracts , signer)
     console.log("signDetails:",signDetails)
     return true
 }
-
 
 export const getNotaryInfo = async function(fileHash, tx, writeContracts) {
    
