@@ -27,7 +27,6 @@ export default function Profile({ceramic, idx}) {
            try{
             if(idx) {
                 const profileSchema = localStorage.getItem("profileSchema");
-                console.log(profileSchema)
                 const data = await idx.get(profileSchema, idx.id)
                 setUser(data)
                 console.log(data);
@@ -41,12 +40,12 @@ export default function Profile({ceramic, idx}) {
     }, [idx] )
 
 
-  const extra = (
-    <a>
-      <Icon name="user" />
-      Notary
-    </a>
-  );
+  // const extra = (
+  //   <a>
+  //     <Icon name="user" />
+  //     Notary
+  //   </a>
+  // );
 
   // const layout = {
   //   labelCol: { span: 8 },
@@ -65,7 +64,6 @@ export default function Profile({ceramic, idx}) {
                     <Card
                       image="https://react.semantic-ui.com/images/avatar/large/patrick.png"
                       header={user.name}
-                      extra={extra}
                       style={{ height: "387.2px" }}
                     />
                   </Grid.Column>
@@ -86,7 +84,7 @@ export default function Profile({ceramic, idx}) {
                               </Table.Row>
                               <Table.Row>
                                 <Table.Cell>
-                                  <h3>User Adress</h3>
+                                  <h3>Ceramic DID</h3>
                                 </Table.Cell>
                                 <Table.Cell>
                                     <h5>{idx.id}</h5>
@@ -97,7 +95,9 @@ export default function Profile({ceramic, idx}) {
                                   <h3>User Type</h3>
                                 </Table.Cell>
                                 <Table.Cell>
-                                  <h3>Notary</h3>
+                                  {
+                                    user.notary ? <h3>Notary</h3> : <h3>Party</h3>
+                                  }
                                 </Table.Cell>
                               </Table.Row>
                               <Table.Row>
@@ -129,7 +129,6 @@ export default function Profile({ceramic, idx}) {
                     <Card
                       image="https://react.semantic-ui.com/images/avatar/large/patrick.png"
                       header="Loading.."
-                      extra={extra}
                       style={{ height: "387.2px" }}
                     />
                   </Grid.Column>

@@ -72,6 +72,7 @@ function App() {
 
         const idx = new IDX({ ceramic, schemas });
         setIdx(idx)
+        localStorage.setItem("userDid", idx.id);
         console.log(idx.id)
     }
 
