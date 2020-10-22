@@ -272,6 +272,7 @@ export const getAllFile = async function(tx, writeContracts, address){
             timestamp: parseInt(signDetails.timestamp) * 1000,
             signStatus: signStatus,
             signers: signDetails.signers,
+            owner: signDetails.owner,
             partySigned: partySigned,
             notary: notaryInfo.notaryAddress,
             notarySigned: notaryInfo.notarized
@@ -281,10 +282,41 @@ export const getAllFile = async function(tx, writeContracts, address){
     return result
 }
 
-export const registerDoc = async function(party, fileHash, cipherKey, title, fileKey, setSubmitting, tx,
-                                          writeContracts, signer, notary){
+export const getFile = async function(tx, writeContracts, address, docHash){
 
-    console.log(notary)
+        const signDetails = await tx(writeContracts.Signchain.getSignedDocuments(docHash))
+        if (!signDetails.signers.length)
+          return false
+        const notaryInfo = await getNotaryInfo(docHash, tx, writeContracts)
+        let signStatus = true
+        let partySigned = false
+        if (signDetails.signers.length !== signDetails.signatures.length){
+            const array = signDetails.signatures.filter((item) => item[0]===address.toString())
+            if (array.length===1){
+                partySigned = true
+            }
+            signStatus = false;
+        }else{
+            signStatus = true
+            partySigned = true
+        }
+        let result = {
+            hash: docHash,
+            title: signDetails.title,
+            timestamp: parseInt(signDetails.timestamp) * 1000,
+            signStatus: signStatus,
+            owner: signDetails.owner,
+            signers: signDetails.signers,
+            partySigned: partySigned,
+            notary: notaryInfo.notaryAddress,
+            notarySigned: notaryInfo.notarized
+        }
+
+    return result
+}
+
+export const registerDoc = async function(party, fileHash, cipherKey, title, fileKey, setSubmitting, tx,
+    writeContracts, signer, notary){
 
     let encryptedKeys=[]
     let userAddress=[]
@@ -369,7 +401,7 @@ export const uploadDoc = async function(file, password, setSubmitting, storageTy
 }
 
 
-export const downloadFile = async function (docHash,password, tx, writeContracts){
+export const downloadFile = async function (name, docHash,password, tx, writeContracts){
 
     let cipherKey = await tx(writeContracts.Signchain.getCipherKey(docHash))
     console.log(cipherKey)
@@ -397,7 +429,7 @@ export const downloadFile = async function (docHash,password, tx, writeContracts
             getFileAWS(documentLocation).then((encryptedFile) => {
                 e2e.decryptFile(encryptedFile, decryptedKey).then((decryptedFile) => {
                     const hash2 = e2e.calculateHash(new Uint8Array(decryptedFile)).toString("hex")
-                    fileDownload(decryptedFile, "res2".concat(".").concat(fileFormat))
+                    fileDownload(decryptedFile, name.concat(".").concat(fileFormat))
                     resolve(true)
                 })
             })
@@ -406,7 +438,7 @@ export const downloadFile = async function (docHash,password, tx, writeContracts
                 console.log("Encrypted:",encryptedFile)
                 e2e.decryptFile(encryptedFile, decryptedKey).then((decryptedFile) => {
                     const hash2 = e2e.calculateHash(new Uint8Array(decryptedFile)).toString("hex")
-                    fileDownload(decryptedFile, "res2".concat(".").concat(fileFormat))
+                    fileDownload(decryptedFile, name.concat(".").concat(fileFormat))
                     resolve(true)
                 })
             })
@@ -417,7 +449,7 @@ export const downloadFile = async function (docHash,password, tx, writeContracts
                 console.log("Encrypted Slate:",encryptedFile)
                 e2e.decryptFile(encryptedFile, decryptedKey).then((decryptedFile) => {
                     const hash2 = e2e.calculateHash(new Uint8Array(decryptedFile)).toString("hex")
-                    fileDownload(decryptedFile, "res2".concat(".").concat(fileFormat))
+                    fileDownload(decryptedFile, name.concat(".").concat(fileFormat))
                     resolve(true)
                 })
             })
