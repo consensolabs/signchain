@@ -1,21 +1,21 @@
 # Signchain :file_folder: :key:
 
 ![logo](./logo.png)
-> Digital signing tool for legal contracts
+> Digital signing platform for legal documents
 
 
 We have been working on an Arbitration platform for some time. While dealing with the conventional system, we felt that there is an absolute need for digitizing the signing process of legal agreements/ documents. That's when we started ideating around the digital signing platform (Signchain).
 
 We know that there has been plenty of effort in the area of electronic signing. But the existing solutions don't seem to operate on standards that are interoperable. In Signchain, we want to address the age-old issues of document signing such as tampering, delayed process, verification troubles, with the help of decentralized storage and open verification. We also want to address the interoperability concerns by using standardized identity, storage, and signing protocols.
 
-We are building a digital signing platform with the help of DIDs, end-to-end encrypted document solution on decentralized storages, and verifiable documents NFTs.
+We created a basic platform where users can share the document privately with other counterparties that need access and sign the document. Whenever any party signs on the document, the proofs (standard digitally signed data) are recorded. The proofs of the signatures can be verified by anyone on the platform while only certain parties will have access to the document. The identity of all the parties can also be verified as the credentials are maintained using decentralized identity standards
 
+We have used the the following technologies/ protocols:
 
-We plan on using the following technologies/ protocols:
+* Fleek / Filecoin slate/ Textile storage solutions
+* Ceramic IDX for decentralized identities
 
-* NFT standards
-* Fleek / Filecoin/ Textile storage solutions
-* Ceramic DIDs
+[Check out the demo video:](https://youtu.be/XZy307J-0dI)
 
 
 ## quickstart
