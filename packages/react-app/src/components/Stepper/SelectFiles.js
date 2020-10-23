@@ -6,17 +6,23 @@ import upload from "../../images/upload.png";
 import { Upload, message } from "antd";
 import { Dropdown, Input } from "semantic-ui-react";
 
+import fleek from "../../images/fleek.png";
+import AWS from "../../images/aws.png";
+import filecoin from "../../images/filecoin.png";
+
 
 const index = require("../../lib/e2ee.js");
 
 const { Dragger } = Upload;
 
-const fileStorage = ["AWS", "Fleek", "Slate"];
+const fileStorage = [{name: "AWS", image: AWS},
+ {name: "Fleek", image: fleek},
+ {name: "Slate", image: filecoin}];
 
 const SelectFiles = ({ setFileInfo, setSubmitting, setTitle, submitting }) => {
   const [selected, setSelected] = useState(false);
   const [storageType, setStorage] = useState("AWS");
-  console.log(storageType);
+
 
   const props = {
     name: "file",
@@ -38,7 +44,6 @@ const SelectFiles = ({ setFileInfo, setSubmitting, setTitle, submitting }) => {
     setSelected(true);
     setSubmitting(true);
     const receipt = await index.uploadDoc(file, "123", setSubmitting, storageType, setFileInfo);
-    console.log("File uploaded!", receipt);
     if (receipt) {
       return true;
     }
@@ -54,9 +59,10 @@ const SelectFiles = ({ setFileInfo, setSubmitting, setTitle, submitting }) => {
             selection
             options={fileStorage.map(storage => {
               return {
-                key: storage,
-                text: storage,
-                value: storage,
+                key: storage.name,
+                text: storage.name,
+                value: storage.name,
+                image: { avatar: true, src: storage.image },
               };
             })}
             onChange={(event, data) => {

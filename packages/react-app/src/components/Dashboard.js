@@ -19,7 +19,7 @@ const Dashboard = () => (
                     <div className="img">
                       <img src={Sign} alt="" srcset="" />
                     </div>
-                    <p className="title">Sign & Send</p>
+                    <p className="title">Sign & Share</p>
                   </div>
                 </div>
               </Link>

@@ -22,7 +22,6 @@ export default function Documents(props) {
   const [loading, setLoading] = useState(false);
   const [downloading, setDownloading] = useState(null);
 
-  console.log("Docs", docs);
 
   useEffect(() => {
     if (props.writeContracts) {
@@ -35,7 +34,6 @@ export default function Documents(props) {
       getAllDoc();
       setSigner(props.userProvider.getSigner());
       index.getAllUsers(props.address, props.tx, props.writeContracts).then(result => {
-        console.log("Registered users:", result);
         setCaller(result.caller);
       });
     }
@@ -52,15 +50,13 @@ export default function Documents(props) {
   };
 
   const downloadFile = (name, docHash) => {
-    console.log("Downloading:", docHash);
+
     setDownloading(docHash);
     index.downloadFile(name, docHash, password, props.tx, props.writeContracts).then(result => {setDownloading(null)});
   };
 
   const signDocument = async docHash => {
-    console.log("Sign doc dow:", docHash);
     const result = await index.attachSignature(docHash, props.tx, props.writeContracts, props.userProvider.getSigner());
-    console.log("resultsss:", result);
   };
 
   const notarizeDocument = async docHash => {

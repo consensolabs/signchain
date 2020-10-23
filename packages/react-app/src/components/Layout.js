@@ -12,11 +12,11 @@ const { Content } = Layout;
 export default function layout(props) {
   console.log(props);
 
-  let history = useHistory();
+    let history = useHistory()
 
-  return (
-    <>
-      {/* ['/documents', '/profile'].includes(history.location.pathname) ?
+    return (
+<>
+        {/* ['/documents', '/profile'].includes(history.location.pathname) ?
             null : */}
 
       <Layout>

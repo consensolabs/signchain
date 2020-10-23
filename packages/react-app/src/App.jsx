@@ -12,16 +12,23 @@ import { useUserAddress } from "eth-hooks";
 import { useExchangePrice, useGasPrice, useUserProvider, useContractLoader, useBalance, } from "./hooks";
 import { Transactor } from "./helpers";
 import {Account, Faucet} from "./components";
+import {profileSchema, documentSchema} from "./ceramic/schemas"
 import SignUpForm from "./components/auth/SignUpForm";
 import LoginForm from "./components/auth/LoginForm";
 import Share from "./components/Share";
+import Dashboard from "./components/Dashboard";
 import Documents from "./components/Documents";
 import Profile from "./components/Profile";
 import Layout from "./components/Layout";
 import Steps from './components/Stepper/Steps'
 import Verify from './components/Verify/Verify'
 import { INFURA_ID, ETHERSCAN_KEY } from "./constants";
-import Dashboard from "./components/Dashboard";
+
+const Ceramic = require('@ceramicnetwork/ceramic-http-client').default;
+const { IDX } = require('@ceramicstudio/idx');
+const { publishSchemas, schemasList } = require('@ceramicstudio/idx-schemas')
+const Wallet = require('identity-wallet').default
+const ceramic = new Ceramic('http://15.207.222.193:7007');
 
 const blockExplorer = "https://etherscan.io/"
 const mainnetProvider = getDefaultProvider("mainnet", { infura: INFURA_ID, etherscan: ETHERSCAN_KEY, quorum: 1 })
@@ -32,6 +39,9 @@ const mainnetProvider = getDefaultProvider("mainnet", { infura: INFURA_ID, ether
 function App() {
 
     const [injectedProvider, setInjectedProvider] = useState();
+    const [idx, setIdx] = useState(null);
+    const [did, setDid] = useState(null);
+    const [schemas, setSchemas] = useState(null)
     const price = useExchangePrice(mainnetProvider);
     const gasPrice = useGasPrice("fast");
     const userProvider = useUserProvider(injectedProvider);
@@ -41,23 +51,48 @@ function App() {
     const yourMainnetBalance = useBalance(mainnetProvider, address);
     const readContracts = useContractLoader(userProvider)
     const writeContracts = useContractLoader(userProvider)
-    console.log(writeContracts)
-
     const loadWeb3Modal = useCallback(async () => {
         const provider = await web3Modal.connect();
         setInjectedProvider(new Web3Provider(provider));
     }, [setInjectedProvider]);
 
+    const init = async(address) => {
+        const did = await Wallet.create({
+            ceramic,
+            seed: address,
+            getPermission(){
+                return Promise.resolve([])
+            }
+        })
+        console.log("DID",did)
+        await ceramic.setDIDProvider(did.getDidProvider());
+        setDid(did);
+
+        const schema = await publishSchemas({ceramic, schemas:schemasList});
+        setSchemas(schema);
+
+        console.log("Schemas",JSON.stringify(schemas, null, 2))
+
+        const idx = new IDX({ ceramic, schemas });
+        setIdx(idx)
+        localStorage.setItem("userDid", idx.id);
+        console.log(idx.id)
+    }
+
     useEffect(() => {
         if (web3Modal.cachedProvider) {
             loadWeb3Modal();
         }
-    }, [loadWeb3Modal]);
+        if(address){
+            init(address).then(data => console.log(idx))
+        }
+    }, [loadWeb3Modal, address]);
 
     const [route, setRoute] = useState();
     useEffect(() => {
         console.log("SETTING ROUTE",window.location.pathname)
         setRoute(window.location.pathname)
+        
     }, [ window.location.pathname ]);
 
   return (
@@ -94,6 +129,9 @@ function App() {
                       address={address}
                       tx={tx}
                       writeContracts={writeContracts}
+                      ceramic={ceramic}
+                      idx={idx}
+                      schemas={schemas}
                   />}/>
 
               <Route exact path="/login" render={(props) =>
@@ -108,6 +146,9 @@ function App() {
                       address={address}
                       tx={tx}
                       writeContracts={writeContracts}
+                      ceramic={ceramic}
+                      idx={idx}
+                      schemas={schemas}
                   />}/>
 
               <Layout
@@ -161,6 +202,8 @@ function App() {
                         tx={tx}
                         writeContracts={writeContracts}
                         {...props}
+                        ceramic={ceramic}
+                        idx={idx}
                     />}/>
             
               </Layout>
