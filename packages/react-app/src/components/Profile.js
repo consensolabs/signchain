@@ -41,7 +41,7 @@ export default function Profile({ceramic, idx}) {
     }, [idx] )
 
 
-  const extra = (
+  const notary = (
     <a>
       <Icon name="user" />
       Notary
@@ -65,7 +65,7 @@ export default function Profile({ceramic, idx}) {
                     <Card
                       image="https://react.semantic-ui.com/images/avatar/large/patrick.png"
                       header={user.name}
-                      extra={user.notary ? extra : null}
+                      extra={user.notary ? notary : null}
                       style={{ height: "387.2px" }}
                     />
                   </Grid.Column>

@@ -23,7 +23,7 @@ export const registerUser = async function(name, email, privateKey, userType, tx
         const result = await tx(writeContracts.Signchain.registerUser(
             name, email, publicKey, userType
         ))
-        console.log("Register res:",result)
+    
         return true
     }catch(err){
         throw err
@@ -45,7 +45,7 @@ export const loginUser = async function(privateKey, tx, writeContracts){
         const result = await tx(writeContracts.Signchain.updatePublicKey(
             publicKey
         ))
-        console.log("Login:",result)
+      
         return true
     }catch (err) {
         throw err
@@ -152,7 +152,6 @@ const storeFileSlate = function (encryptedData){
             },
             body: data
         }).then((response)=>{
-            console.log("Slate response:", response)
             resolve(response.json())
         }).catch((error)=>{
             console.log("Slate error:", error)
@@ -172,7 +171,6 @@ const getFileSlate = function(url){
             return response.arrayBuffer()
         }).then((data)=>{
             let encryptedFile = new Uint8Array(data);
-            console.log("DATA:",encryptedFile)
             resolve(Buffer.from(encryptedFile))
         }).catch((error)=>{
             console.log("ERROR:",error)
@@ -405,7 +403,7 @@ export const uploadDoc = async function(file, password, setSubmitting, storageTy
 export const downloadFile = async function (name, docHash,password, tx, writeContracts){
 
     let cipherKey = await tx(writeContracts.Signchain.getCipherKey(docHash))
-    console.log(cipherKey)
+
     cipherKey = JSON.parse(cipherKey)
     const document = await tx(writeContracts.Signchain.getDocument(docHash))
     let encryptedKey = {
@@ -419,11 +417,11 @@ export const downloadFile = async function (name, docHash,password, tx, writeCon
     const decryptedKey = await e2e.decryptKey(privateKey[0],encryptedKey)
     const documentHash = document.documentHash
     let documentLocation = document.documentLocation
-    console.log("Document Location:",documentLocation)
+    
     const fileSplit= documentLocation.split(".")
     const fileFormat = fileSplit[fileSplit.length - 1]
     const storageType = fileSplit[fileSplit.length - 2]
-    console.log("download storage type:",storageType)
+ 
 
     return new Promise((resolve)=>{
         if (storageType==="AWS") {
@@ -436,7 +434,7 @@ export const downloadFile = async function (name, docHash,password, tx, writeCon
             })
         }else if (storageType==="Fleek"){
             getFileFleek(documentLocation).then((encryptedFile) => {
-                console.log("Encrypted:",encryptedFile)
+            
                 e2e.decryptFile(encryptedFile, decryptedKey).then((decryptedFile) => {
                     const hash2 = e2e.calculateHash(new Uint8Array(decryptedFile)).toString("hex")
                     fileDownload(decryptedFile, name.concat(".").concat(fileFormat))
@@ -445,9 +443,9 @@ export const downloadFile = async function (name, docHash,password, tx, writeCon
             })
         }else {
             documentLocation = documentLocation.slice(0, documentLocation.lastIndexOf("."))
-            console.log("document new location:",documentLocation)
+   
             getFileSlate(documentLocation).then((encryptedFile) => {
-                console.log("Encrypted Slate:",encryptedFile)
+          
                 e2e.decryptFile(encryptedFile, decryptedKey).then((decryptedFile) => {
                     const hash2 = e2e.calculateHash(new Uint8Array(decryptedFile)).toString("hex")
                     fileDownload(decryptedFile, name.concat(".").concat(fileFormat))
@@ -486,7 +484,7 @@ export const attachSignature = async function(fileHash, tx, writeContracts , sig
         signature[0],
         signature[1]
     ))
-    console.log("signDetails:",signDetails)
+
     return true
 }
 
@@ -498,7 +496,7 @@ export const notarizeDoc = async function(fileHash, tx, writeContracts , signer)
         signature[0],
         signature[1]
     ))
-    console.log("signDetails:",signDetails)
+ 
     return true
 }
 

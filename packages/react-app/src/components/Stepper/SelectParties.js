@@ -6,7 +6,6 @@ import { Dropdown, Checkbox } from "semantic-ui-react";
 import jenny from "../../images/jenny.jpg";
 
 const SelectParties = ({ users, parties, notaries, setParties, setDocNotary }) => {
-  console.log(notaries);
 
   const [displayNotary, setDisplayNotary] = useState(false);
 

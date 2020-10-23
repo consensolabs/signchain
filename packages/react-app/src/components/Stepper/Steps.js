@@ -71,11 +71,9 @@ const stepper = props => {
   useEffect(() => {
     if (props.writeContracts) {
       props.writeContracts.Signchain.on("DocumentSigned", (author, oldValue, newValue, event) => {
-        console.log(event);
       });
       setSigner(props.userProvider.getSigner());
       index.getAllUsers(props.address, props.tx, props.writeContracts).then(result => {
-        console.log("Registered users:", result);
 
         setUsers(result.userArray);
         setCaller(result.caller);
