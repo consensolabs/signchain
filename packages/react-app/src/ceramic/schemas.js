@@ -1,2 +1,0 @@
-export const profileSchema = "ceramic://bagcqceratrov7gptynbauy3pt467uzcy5o2pdkw5437tikvtzys4ir4tbiwa";
-export const documentSchema = "ceramic://bagcqceraqae5ubsxyvun2tn3eje2wtq6oizu56of6sceykk6f2373v5x2tcq"
