@@ -1,4 +1,14 @@
-# Signchain :file_folder: :key:
+> ### Signchain has bagged 2 sponsor prizes during the [EthOnline hackathon](https://hack.ethglobal.co/showcase/signchain-recY6409wwWnJyxJ9) :tada: :confetti_ball:.
+> * :large_orange_diamond: [Ceramic](https://www.ceramic.network): Best overall use of [Identity Index (IDX)](http://idx.xyz) Library
+> * :file_folder: [Protocol Labs](https://protocol.ai), 3rd place
+>
+>  **We have some exciting roadmap planned for Signchain :rocket:. So, keep an eye on https://www.signchain.xyz :eyes:**
+
+> ### :construction_worker: The project development is moved to [Signchain organization](https://github.com/signchain).
+
+
+# Signchain :memo: :key:
+
 
 ![logo](./logo.png)
 > Digital signing platform for legal documents
